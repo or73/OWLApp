@@ -1,0 +1,99 @@
+<!-- user_login.html -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+            <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Home') }}</a></li>
+            <li class='breadcrumb-item active'>{{ _('Users') }}</li>
+        </ol>
+    </nav>
+    <h1>{{ _('User Main Menu') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+    {% endwith %}
+    {% if profile == 'admin' or profile == 'manager' %}
+        <section class='d-flex justify-content-center'>
+            <div class='row h-100 w-100 align-content-center'>
+                <div class='col col-md-10 w-100 mx-auto text-center align-content-center'>
+                    {% if profile == 'admin' %}
+                        <a class='btn btn-outline-success main_menu_button create_button' data-placement='top'
+                           href='{{ url_for("user_bp.create") }}' data-toggle='tooltip' title='Create User'
+                           type='button'>
+                            <i class='fas fa-user-plus i_create'></i>
+                            <p>{{ _('Create User') }}</p>
+                        </a>
+                    {% endif %}
+                    {% if users %}
+                        <table class='table main_menu_table w-100'>
+                            <thead>
+                                <tr>
+                                    <th scope='col'>{{ _('Username') }}</th>
+                                    <th scope='col'>{{ _('Profile') }}</th>
+                                    <th scope='col'>{{ _('Group User') }}</th>
+                                    {% if profile == 'admin' %}<th scope='col'>{{ _('Group Manager') }}</th>{% endif %}
+                                    <th></th>
+                                    {% if profile == 'admin' %}<th></th><th></th>{% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr class='justify-content-center main_tr'>
+                                        <td class='text-left align-middle'>{{ user.username }}</td>
+                                        <td class='text-left align-middle'>{{ user.profile }}</td>
+                                        <td class='text-left align-middle'>
+                                            {% for group in user.user_groups %}
+                                                <a href='{{ url_for("group_bp.read", group_name=group) }}' class='link_without_deco'>
+                                                    {{ group }}
+                                                </a>
+                                            {% endfor %}
+                                        </td>
+                                        {% if profile == 'admin' %}
+                                            <td class='text-left align-middle'>
+                                                {% for group in user.user_groups_manager %}
+                                                    <a href='{{ url_for("group_bp.read", group_name=group) }}', class='link_without_deco'>
+                                                        {{ group }}
+                                                    </a>
+                                                {% endfor %}
+                                            </td>
+                                        {% endif %}
+
+                                        <td class='text-left align-middle'>
+                                            <a class='btn btn-outline-info main_menu_button'
+                                               data-toggle='tooltip' data-placement='top'
+                                               title={{ _('Read User') }} href='{{ url_for("user_bp.read", username=user.username) }}'>
+                                                <i class='fas fa-user i_read'></i>
+                                            </a>
+                                        </td>
+                                        {% if profile == 'admin' %}
+                                            <td class='text-left align-middle'>
+                                                <a class='btn btn-outline-secondary main_menu_button'
+                                                   data-toggle='tooltip' data-placement='top'
+                                                   title={{ _('Update User') }} href='{{ url_for("user_bp.update", username=user.username) }}'>
+                                                    <i class='fas fa-user-edit i_update'></i>
+                                                </a>
+                                            </td>
+                                            <td class='text-left align-middle'>
+                                                <a class='btn btn-outline-danger main_menu_button'
+                                                   data-toggle='tooltip' data-placement='top'
+                                                   title={{ _('Delete User') }} href='{{ url_for("user_bp.delete", username=user.username) }}'>
+                                                    <i class='fas fa-user-minus i_delete'></i>
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div><h2>{{ _('Database does not contain any User') }}</h2></div>
+                    {% endif %}
+                </div> <!-- /.col -->
+            </div> <!-- /.row -->
+        </section>
+
+    {% elif profile == 'user' %}
+    {% endif %}
+{% endblock %}

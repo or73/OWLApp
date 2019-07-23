@@ -1,0 +1,65 @@
+<!-- show the login page -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+            <li class='breadcrumb-item'><a href='{{ url_for("group_bp.groups") }}'>{{ _('Home') }}</a> </li>
+            <li class='breadcrumb-item'><a href='{{ url_for("group_bp.groups") }}'>{{ _('Groups') }}</a></li>
+            <li class='breadcrumb-item active'>{{ _('Read') }}</li>
+        </ol>
+    </nav>
+    <h1>{{ _('Read Group Data') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+    <div class='text-center mb-4'>
+        <img class='mb-4' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}'
+             alt='OWL Logo' width='190' height='75'/>
+        <h1 class='h3 mb-3 font-weight-normal'>{{ _('Group Data') }}</h1>
+    </div> <!-- /.text-center -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+    {% endwith %}
+    <div class='row h-100 w-100 justify-content-center align-items-center'>
+        <div class='table-responsive-lg user_data_table'>
+            <table class='table w-100'>
+                <tbody>
+                    <tr>
+                        <th scope='row'>{{ _('Name') }}: </th>
+                        <td>{{ group.name }}</td>
+                    </tr>
+                    <tr>
+                        <th scope='row'>{{ _('Description') }}:</th>
+                        <td>{{ group.description }}</td>
+                    </tr>
+                    <tr>
+                        <th scope='row'>{{ _('Managers') }}:</th>
+                        <td>
+                            {% for user in group.managers %}
+                                <a class='link_without_deco' href='{{ url_for("user_bp.read", username=user) }}'>{{ user }}</a>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope='row'>{{ _('Users') }}:</th>
+                        <td>
+                            {% for user in group.users %}
+                                 <a class='link_without_deco' href='{{ url_for("user_bp.read", username=user) }}'>{{ user }}</a>
+                            {% endfor %}
+                        </td>
+                    </tr>
+
+                    {% if profile == 'admin' %}
+                        <tr><td colspan=2></td> </tr>
+
+                        <tr class='text-center'>
+                            <td colspan='2'>
+                                <a class='btn btn-primary' type='submit' href='{{ url_for("group_bp.update", group_name=group.name) }}'>{{ _('Update') }}</a>
+                                <a class='btn btn-danger' type='reset' href='{{ url_for("group_bp.delete", group_name=group.name) }}'>{{ _('Delete') }}</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div> <!-- /.table-responsive-lg -->
+    </div> <!-- /.row -->
+{% endblock %}

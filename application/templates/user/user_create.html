@@ -1,0 +1,120 @@
+<!-- user_create.html -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+            <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Home') }}</a> </li>
+            <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Users') }}</a></li>
+            <li class='breadcrumb-item active'>{{ _('Create') }}</li>
+        </ol>
+    </nav>
+    <h1>{{ _('Create a New User') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+    <div class='row w-100 align-items-center align-content-center text-center mx-auto'>
+        <div class='col text-center mb-4'>
+            <img class='mb-4' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}' alt='OWL Logo' width='190' height='75'/>
+            <h1 class='h3 mb-3 font-weight-normal'>{{ _('Create New User') }}</h1>
+        </div> <!-- /.text-center -->
+    </div> <!-- /.row -->
+
+    <div class='row w-100 align-items-center align-content-center text-center mx-auto'>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+        {% endwith %}
+    </div> <!-- /.row -->
+
+    <div class='row h-100 justify-content-center align-items-center'>
+        <form class='form-signin col-12 needs-validation create_form' method='POST' action='{{ url_for("user_bp.create") }}' enctype='multipart/form-data'>
+            <div class='row'>
+                <div class='col md-4 text-center'>
+                    <div class='form-group'>
+                        <img id='user_img' src='{{ url_for("static", filename="dist/img/default_user_img.png") }}'
+                             class='user_img' alt='User image'/>
+                        <input id='inputImage' type='file' class='file' data-preview-file-type='any'
+                               name='picture' accept='.jpg, .jpeg, .png' size='256KB' hidden='hidden'/>
+                        <button id='update_img' type='button' class='btn btn-dark'>{{ _('Upload User Image') }}</button>
+                        <div class='valid-feedback'>
+                            Valid Field
+                        </div> <!-- /.valid-feedback -->
+                        <div class='invalid-feedback'>
+                            This field is required
+                        </div> <!-- /.invalid-feedback -->
+                    </div> <!-- /.form-label-group -->
+                </div> <!-- /.col -->
+
+                <div class='col col-md-5 align-content-center'>
+                    <div class='form-label-group'>
+                        <input type='text' id='inputName' class='form-control' name='name' placeholder='{{ _('First & Last Name') }}' required autofocus/>
+                        <label for='inputName'>{{ _('First & Last Name') }}</label>
+                        <div class='valid-feedback'>
+                            Valid Field
+                        </div> <!-- /.valid-feedback -->
+                        <div class='invalid-feedback'>
+                            This field is required
+                        </div> <!-- /.invalid-feedback -->
+                    </div> <!-- /.form-label-group -->
+
+                    <div class='form-label-group'>
+                        <input type='text' id='inputUserName' class='form-control' name='username' placeholder='{{ _('Username') }}'  required autofocus/>
+                        <label for='inputUserName'>{{ _('Username') }}</label>
+                        <div class='valid-feedback'>
+                            Valid Field
+                        </div> <!-- /.valid-feedback -->
+                        <div class='invalid-feedback'>
+                            This field is required
+                        </div> <!-- /.invalid-feedback -->
+                    </div> <!-- /.form-label-group -->
+
+                    <div class='form-label-group'>
+                        <input type='email' id='inputEmail' class='form-control' name='email' placeholder='{{ _('Email Address') }}' required autofocus/>
+                        <label for='inputEmail'>{{ _('Email Address') }}</label>
+                        <div class='valid-feedback'>
+                            Valid Field
+                        </div> <!-- /.valid-feedback -->
+                        <div class='invalid-feedback'>
+                            This field is required
+                        </div> <!-- /.invalid-feedback -->
+                    </div> <!-- /.form-label-group -->
+
+                    <div class='form-label-group'>
+                        <input type='password' id='inputPassword' class='form-control' name='password' placeholder='{{ _('Password') }}' required/>
+                        <label for='inputPassword'>{{ _('Password') }}</label>
+                        <div class='valid-feedback'>
+                            Valid Field
+                        </div> <!-- /.valid-feedback -->
+                        <div class='invalid-feedback'>
+                            This field is required
+                        </div> <!-- /.invalid-feedback -->
+                    </div> <!-- /.form-label-group -->
+                </div> <!-- /.col -->
+
+                <div class='col col-md-3'>
+                    <div class='form-group col-md-10'>
+                        <label for='profile'>{{ _('Profile') }}</label>
+                        <select id='profile' class='form-control' name='profile'>
+                            <option value='user' selected>{{ _('User') }}</option>
+                            <option value='manager'>{{ _('Manager') }}</option>
+                            <option value='admin'>{{ _('Admin') }}</option>
+                        </select>
+                    </div> <!-- /.form-label-group -->
+
+                    <div class='form-group col-md-10'>
+                        <label for='language'>{{ _('Language') }}</label>
+                        <select id='language' class='form-control' name='language'>
+                            <option value='es' selected>{{ _('Español') }}</option>
+                            <option value='en'>{{ _('English') }}</option>
+                        </select>
+                    </div> <!-- /.form-label-group -->
+                </div> <!-- /.col -->
+            </div> <!-- /.row -->
+
+            <div class='row'>
+                <div class='col text-center'>
+                    <button class='btn btn-primary' type='submit'>{{ _('Create') }}</button>
+                    <a class='btn btn-danger' type='reset' href='{{ url_for("user_bp.users") }}'>{{ _('Cancel') }}</a>
+                </div> <!-- /.col -->
+            </div> <!-- /.row -->
+        </form>
+    </div> <!-- /.row -->
+{% endblock %}

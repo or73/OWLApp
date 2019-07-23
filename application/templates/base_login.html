@@ -1,0 +1,50 @@
+<!-- templates/base.html -->
+<!-- contains common layout and links -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8"/>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'/>
+
+    <!--- favicon -->
+    <!--[if IE]><link rel="shortcut icon" href='{{ url_for("static", filename="dist/img/ico/favicon.ico") }}'><![endif]-->
+    <link rel='shortcut icon' type='image/x-icon' href='{{ url_for("static", filename="dist/img/ico/favicon.ico") }}'/>
+    <!-- Bootstrap CSS -->
+    <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/bootstrap/bootstrap.min.css") }}'/>
+    <!-- Fontawesome -->
+    <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/font_awesome/font_awesome.min.css") }}'/>
+    <!-- JQuery UI -->
+    <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/jquery_ui/jquery-ui.min.css") }}'/>
+    <!-- Web Styles -->
+    <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/styles.css") }}'/>
+    <title>{{ _('Authenticated User') }}</title>
+</head>
+<body>
+    {% if current_user.authenticated %}
+        {% include 'navbar.html' %}
+    {% endif %}
+    <main class='container' id='main_container'>
+        {% block content %}
+        {% endblock %}
+    </main> <!-- /.container -->
+
+    <footer id='sticky_footer' class='py-4 bg-dark text-white-50'>
+        <div class='container text-center'>
+            <small><strong>OWL App</strong> © 2019 Copyright - <a href='#'>OR73</a></small>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src='{{ url_for("static", filename="dist/js/includes/jquery/jquery.min.js") }}'></script>
+    <!-- Bootstrap JS -->
+    <script src='{{ url_for("static", filename="dist/js/includes/bootstrap/bootstrap.bundle.min.js") }}'></script>
+    <!-- Font Awesome -->
+    <script src='{{ url_for("static", filename="dist/js/includes/font_awesome/font_awesome.min.js") }}'></script>
+    <!-- JQuery UI -->
+    <script src='{{ url_for("static", filename="dist/js/includes/jquery_ui/jquery-ui.min.js") }}'></script>
+    <!-- scripts -->
+    <script src='{{ url_for("static", filename="dist/js/scripts.js") }}'></script>
+</body>
+</html>

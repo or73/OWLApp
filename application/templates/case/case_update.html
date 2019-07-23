@@ -1,0 +1,74 @@
+<!-- user_update.html -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+            <li class='breadcrumb-item'><a href='{{ url_for("case_bp.cases") }}'>{{ _('Home') }}</a> </li>
+            <li class='breadcrumb-item'><a href='{{ url_for("case_bp.cases") }}'>{{ _('Cases') }}</a></li>
+            <li class='breadcrumb-item active'>{{ _('Update') }}</li>
+        </ol>
+    </nav>
+    <h1>{{ _('Update Case') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+
+    <div class='text-center mb-4'>
+        <img class='mb-4' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}' alt='OWL Logo' width='190' height='75'/>
+        <h1 class='h3 mb-3 font-weight-normal'>{{ _('Edit/Update Case') }}</h1>
+    </div> <!-- /.text-center -->
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+    {% endwith %}
+    <div class='row h-100 justify-content-center align-items-center'>
+
+        <form class='form-signin col-12' method='POST' action='{{ url_for("case_bp.update", case_name=case.name) }}'>
+            <div class='form-label-group'>
+                <input type='text' id='inputName' class='form-control' name='name' placeholder='{{ _('Name') }}' value='{{ case.name }}' required autofocus/>
+                <label for='inputName'>{{ _('Name') }}</label>
+            </div> <!-- /.form-label-group -->
+
+            <div class='form-label-group'>
+                <input type='text' id='inputDescription' class='form-control' name='description' placeholder='{{ _('Description') }}' value='{{ case.description }}' required autofocus/>
+                <label for='inputDescription'>{{ _('Description') }}</label>
+            </div> <!-- /.form-label-group -->
+
+            <div class='form-group col-md-10'>
+                <div class='row'>
+                    <div class='col'>
+                        <fieldset class='float-right'>
+                            <legend><strong>{{ _('Groups') }}</strong></legend>
+                            <ol class='box' id='all_groups'>
+                                {% for group in groups %}
+                                    <li class='list_items' id='{{ group }}'>
+                                        <input type='hidden' value='{{ group }}'/>
+                                        {{ group }}
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </fieldset>
+                    </div> <!-- /.col -->
+
+                    <div class='col'>
+                        <fieldset class='float-left'>
+                            <legend><strong>{{ _('Case Groups') }}</strong></legend>
+                            <ol class='box' id='current_case_groups'>
+                                {% for group in case.groups  %}
+                                    <li class='list_items' id='{{ group }}'>
+                                        <input type='hidden' value='{{ group }}'/>
+                                        {{ group }}
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </fieldset>
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            </div> <!-- /.form-group -->
+
+            <div class='text-center'>
+                <button class='btn btn-primary' type='submit'>{{ _('Update') }}</button>
+                <a class='btn btn-danger' type='reset' href='{{ url_for("case_bp.cases") }}'>{{ _('Cancel') }}</a>
+            </div>
+        </form>
+    </div> <!-- /.row -->
+{% endblock %}

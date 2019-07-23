@@ -1,0 +1,80 @@
+<!-- user_login.html -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+            <li class='breadcrumb-item'><a href='{{ url_for("case_bp.cases") }}'>{{ _('Home') }}</a> </li>
+            <li class='breadcrumb-item active'>{{ _('Cases') }}</li>
+        </ol>
+    </nav>
+    <h1>{{ _('Case Main Menu') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+    {% endwith %}
+
+    {% if profile == 'admin' or profile == 'manager' %}
+        <section class='d-flex justify-content-center'>
+            <div class='row h-100 w-100'>
+                <div class='col col-md-6 w-100 mx-auto text-center'>
+                    <a class='btn btn-outline-success main_menu_button create_button' data-placement='top'
+                       href='{{ url_for("case_bp.create") }}' data-toggle='tooltip' title='Create Case'
+                       type='button'>
+                        <i class='fas fa-folder-plus i_create'></i>
+                        <p>{{ _('Create Case') }}</p>
+                    </a>
+                    {% if cases %}
+                        <table class='table main_menu_table w-100'>
+                            <thead>
+                                <tr>
+                                    <th scope='col'>{{ _('Case Name') }}</th>
+                                    <th scope='col'>{{ _('Description') }}</th>
+                                    <th scope='col'>{{ _('Groups') }}</th><th></th><th></th><th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for case in cases %}
+                                    <tr class='justify-content-center main_tr'>
+                                        <td class='text-left align-middle'>{{ case.name }}</td>
+                                        <td class='text-left align-middle'>{{ case.description }}</td>
+                                        <td class='text-left align-middle'>
+                                            {% for group in case.groups %}
+                                                <a class='link_without_deco' href='{{ url_for("group_bp.read", group_name=group) }}'>{{ group }}</a>
+                                            {% endfor %}
+                                        </td>
+                                        <td class='text-left align-middle'>
+                                            <a class='btn btn-outline-info main_menu_button'
+                                               data-toggle='tooltip' data-placement='top'
+                                               title='{{ _('Read Case') }}' href='{{ url_for("case_bp.read", case_name=case.name) }}'>
+                                                <i class='fas fa-folder i_read'></i>
+                                            </a>
+                                        </td>
+                                        <td class='text-left align-middle'>
+                                            <a class='btn btn-outline-secondary main_menu_button'
+                                               data-toggle='tooltip' data-placement='top'
+                                               title='{{ _('Update Case') }}' href='{{ url_for("case_bp.update", case_name=case.name) }}'>
+                                                <i class='fas fa-folder-open i_update'></i>
+                                            </a>
+                                        </td>
+                                        <td class='text-left align-middle'>
+                                            <a class='btn btn-outline-danger main_menu_button'
+                                               data-toggle='tooltip' data-placement='top'
+                                               title='{{ _('Delete Case') }}' href='{{ url_for("case_bp.delete", case_name=case.name) }}'>
+                                                <i class='fas fa-folder-minus i_delete'></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div><h2>{{ _('Database does not contain any Case') }}</h2></div>
+                    {% endif %}
+                </div> <!-- /.col -->
+            </div> <!-- /.row -->
+        </section>
+    {% elif profile == 'user' %}
+    {% endif %}
+{% endblock %}

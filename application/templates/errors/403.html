@@ -1,0 +1,43 @@
+<!-- show the login page -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <div class='text-center mb-4'>
+        <img class='mb-4' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}'
+             alt='OWL Logo' width='190' height='75'/>
+        <h1 class='h3 mb-3 font-weight-normal'>{{ _('File Not Found') }}</h1>
+    </div> <!-- /.text-center -->
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+    {% endwith %}
+
+    <div class='container h-100 w-100'>
+        <div class='row h-100 w-100 justify-content-center align-items-center alert alert-dark' role='alert'>
+            <h1 class='display-4'>{{ _('Error - 403') }}<small> <strong>-</strong> {{ _('Forbidden') }}</small></h1>
+        </div> <!-- /.row -->
+        <div class='row h-100 w-100 justify-content-center align-items-center'>
+            <h1>{{ _('You do not have the permission to access the required resource.') }}</h1>
+        </div> <!-- /.row -->
+        <div class='row h-100 w-100 justify-content-center align-items-center'>
+            <h2>{{ _('It is either:') }}</h2>
+        </div> <!-- /.row -->
+        <div class='row h-100 w-100 justify-content-center align-items-center'>
+            <ul class='decoration_on'>
+                <li>{{ _('Read-protected.') }}</li>
+                <li>{{ _('Not readable by the server.') }}</li>
+                <li>{{ _('You do not have enough privileges.') }}</li>
+            </ul>
+        </div> <!-- /.row -->
+    </div> <!-- /.container -->
+
+    <div class='row h-100 justify-content-center align-items-center'>
+        <p>
+            <a class='btn btn-info'
+               href='{{ url_for(prev_page) }}'>
+                {{ _('Safe Place') }}
+            </a>
+        </p>
+    </div> <!-- /.row -->
+{% endblock %}

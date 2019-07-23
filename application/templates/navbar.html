@@ -1,0 +1,94 @@
+{% block content %}
+    <nav class='navbar navbar-expand-lg navbar-dark bg-dark'>
+        <a class='navbar-brand' href=''>
+            <img src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_white_sml.png") }}' width='85' height='35' class='d-inline-block align-top' alt='OWL Logo'/>
+        </a>
+        <button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarSupportedContent'
+                aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'>
+            <span class='navbar-toggler-icon'></span>
+        </button>
+
+        <div class='collapse navbar-collapse' id='navbarSupportedContent'>
+            <ul class='navbar-nav mr-auto'>
+                <li class='nav-item active'>
+                    <a class='nav-link' href='{{ url_for("user_bp.users") }}' data-toggle='tooltip' data-placement='top' title='{{ _('Home')}}'>
+                        <div class='menu_icon'><i class='fas fa-home'></i></div> <span class='sr-only'>(current)</span> </a>
+                </li>
+
+                <!-- Admin or Manager -->
+                {% if profile == 'admin' or profile == 'manager' %}
+                    <li class='nav-item'>
+                        <a class='nav-link disabled' tabindex='-1' aria-disabled='true'></a>
+                    </li>
+                    <li class='nav-item'>
+                        <a class='nav-link' href='{{ url_for("user_bp.users") }}' data-toggle='tooltip' data-placement='top' title={{ _('Users') }}>
+                            <div class='menu_icon'><i class='fas fa-user-cog'></i></div>
+                        </a>
+                    </li>
+                    <li class='nav-item'>
+                        <a class='nav-link' href='{{ url_for("group_bp.groups") }}' data-toggle='tooltip' data-placement='top' title={{ _('Groups') }}>
+                            <div class='menu_icon'><i class='fas fa-users'></i></div>
+                        </a>
+                    </li>
+                    <li class='nav-item'>
+                        <a class='nav-link' href='{{ url_for("case_bp.cases") }}' data-toggle='tooltip' data-placement='top' title={{ _('Cases') }}>
+                            <div class='menu_icon'><i class='fas fa-address-card'></i></div>
+                        </a>
+                    </li>
+                    <li class='nav-item'>
+                        <a class='nav-link disabled' tabindex='-1' aria-disabled='true'></a>
+                    </li>
+                    <li class='nav-item'>
+                        <a class='nav-link' href='{{ url_for("login_bp.logout") }}' data-toggle='tooltip' data-placement='top' title={{ _('Logout') }}>
+                            <div class='menu_icon'><i class='fa fa-sign-out-alt'></i> </div>
+                        </a>
+                    </li>
+                <!-- User -->
+                {% elif profile == 'user' %}
+                    <li class='nav-item'>
+                        <a class='nav-link' href='{{ url_for("case_bp.cases_user_login") }}' data-toggle='tooltip' data-placement='top' title={{ _('Cases') }}>
+                            <div class='menu_icon'><i class='fa fa-address-card'></i> </div>
+                        </a>
+                    </li>
+                    <li class='nav-item'>
+                        <a class='nav-link' href='{{ url_for("login_bp.logout") }}' data-toggle='tooltip' data-placement='top' title='{{ _('Logout') }}'>
+                            <div class='menu_icon'><i class='fa fa-sign-out-alt'></i> </div>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            <ul class='d-inline my-2 my-lg-0 language_class'>
+                <li class='nav-item'>
+                    <a class='nav-link' href='{{ url_for("user_bp.settings") }}' data-toggle='tooltip' data-placement='top' title='{{ _('Settings') }}'>
+                        <div class='menu_icon'><i class='fa fa-user-circle'></i> </div>
+                    </a>
+                </li>
+            </ul>
+            <ul class='d-inline my-2 my-lg-0 language_class'>
+                <li class='nav-item dropdown'>
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarLanguage' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        {{ _('Language') }}
+                    </a>
+                    <div class='dropdown-menu' aria-labelledby='navbarLanguage'>
+                        {% for (lang, language) in AVAILABLE_LANGUAGES.items() %}
+                            {% if lang == CURRENT_LANGUAGE %}
+                                <a href='#' class='dropdown-item select_language'>
+                                    <strong><img src='{{ url_for("static", filename="dist/img/{}_logo.png".format(lang)) }}'
+                                                 alt='{{ language }} icon'/> {{ language }}</strong></a>
+                            {% else %}
+                                <a href='{{ url_for("user_bp.set_language", language=lang) }}' class='dropdown-item select_language'>
+                                    <img src='{{ url_for("static", filename="dist/img/{}_logo.png".format(lang)) }}'
+                                         alt='{{ language }} icon'/> {{ language }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div> <!-- /.dropdown-menu -->
+                </li>
+            </ul>
+            <form class='form-inline my-2 my-lg-0'>
+                <input class='form-control mr-sm-2' type='search' placeholder='{{ _('Search') }}' aria-label='Search'/>
+                <button class='btn btn-outline-success my-w my-sm-0' type='submit'>{{ _('Search') }}</button>
+            </form>
+        </div> <!-- /.collapse -->
+    </nav>
+{% endblock %}

@@ -1,0 +1,146 @@
+<!-- user_update.html -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+            <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Home') }}</a> </li>
+            {% if profile == 'admin' or profile == 'manager' %}
+                <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Users') }}</a></li>
+            {% elif profile == 'user' %}
+                <li class='breadcrumb-item'><a href='{{ url_for("user_bp.settings") }}'>{{ _('User') }}</a></li>
+            {% endif %}
+            {% if is_owner %}
+                <li class='breadcrumb-item active'>{{ _('Settings') }}</li>
+            {% else %}
+                <li class='breadcrumb-item active'>{{ _('Update') }}</li>
+            {% endif %}
+        </ol>
+    </nav>
+    {% if is_owner %}
+        <h1>{{ _('User Settings') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+    {% else %}
+        <h1>{{ _('Edit/Update User Data') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+    {% endif %}
+
+
+    <div class='row w-100 align-items-center align-content-center text-center mx-auto'>
+        <div class='text-center align-content-center align-items-center mx-auto'>
+            <img class='mb-4 logo_img' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}'
+                 alt='OWL Logo'/>
+           {% if is_owner %}
+                <h1>{{ _('User Settings') }}</h1>
+            {% else %}
+                <h1>{{ _('Edit/Update User Data') }}</h1>
+            {% endif %}
+        </div> <!-- /.text-center -->
+    </div> <!-- /.row -->
+
+    <div class='row w-100'>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+        {% endwith %}
+    </div> <!-- /.row -->
+
+    <div class='row h-100 w-100 align-items-center'>
+        <form class='form-signin' method='POST' action='{{ url_for("user_bp.update", username=user.username) }}' enctype='multipart/form-data'>
+            <div class='row w-100 h-100'>
+                <div class='col w-25 h-100 text-center'>
+                    <div class='img-thumbnail'>
+                        {% if filename %}
+                            <img id='user_img' class='user_img'
+                                 src='{{ url_for('user_bp.get_user_image', filename=filename) }}'
+                                 alt='{{ user.username }} picture'/>
+                        {% else %}
+                            <img id='user_img' class='user_img'
+                                 src='{{ url_for("static", filename="dist/img/default_user_img.png") }}'
+                                 alt='{{ user.username }} picture'/>
+                        {% endif %}
+                    </div> <!-- /.img-thumbnail -->
+                    <div class='form-group col'>
+                        {% if is_owner %}
+                            <input id='inputImage' type='file' class='file' data-preview-file-type='any'
+                                   name='picture' accept='.jpg, .jpeg, .png' size='256KB' hidden='hidden'/>
+                            <button id='update_img' type='button' class='btn btn-dark'>
+                                {{ _('Modify user image') }}
+                            </button>
+                            <div class='valid-feedback'>
+                                Valid Field
+                            </div> <!-- /.valid-feedback -->
+                            <div class='invalid-feedback'>
+                                This field is required
+                            </div> <!-- /.invalid-feedback -->
+                        {% endif %}
+                    </div> <!-- /.form-label-group -->
+                </div> <!-- /.text-center -->
+
+                <div class='col w-75 h-100'>
+                    <div class='form-label-group'>
+                        <input type='text' id='inputName' class='form-control' name='name' placeholder='{{ _('First & Last Name') }}' value='{{ user.name }}' required autofocus/>
+                        <label for='inputName'>{{ _('First & Last Name') }}</label>
+                    </div> <!-- /.form-label-group -->
+
+                    <div class='form-label-group'>
+                        <input type='text' id='inputUserName' class='form-control' name='username' placeholder='{{ _('Username') }}' value='{{ user.username }}' required autofocus/>
+                        <label for='inputUserName'>{{ _('Username') }}</label>
+                    </div> <!-- /.form-label-group -->
+
+                    <div class='form-label-group'>
+                        <input type='email' id='inputEmail' class='form-control' name='email' placeholder='{{ _('email') }}' value='{{ user.email }}' required autofocus/>
+                        <label for='inputEmail'>{{ _('Email') }}</label>
+                    </div> <!-- /.form-label-group -->
+
+                    {% if is_owner %}
+                        <div class='form-label-group'>
+                            <input type='password' id='inputPassword' class='form-control'
+                                   name='password' placeholder='{{ _('Password') }}'
+                                   value='Modify Password' required autofocus/>
+                            <label for='inputPassword'>{{ _('Password') }}</label>
+                        </div> <!-- /.form-label-group -->
+                    {% endif %}
+
+                    {% if not is_owner %}
+                        <div class='form-group col-md-4'>
+                            <label for='active'>{{ _('Active') }}</label>
+                            <select id='active' class='form-control' name='active'>
+                                {% if user.active == True %}
+                                    <option value='True' selected>{{ _('True') }}</option>
+                                    <option value='False'>{{ _('False') }}</option>
+                                {% else %}
+                                    <option value='True'>{{ _('True') }}</option>
+                                    <option value='False' selected>{{ _('False') }}</option>
+                                {% endif %}
+                            </select>
+                        </div> <!-- /.form-label-group -->
+
+                        <div class='form-group col-md-4'>
+                            <label for='profile'>{{ _('Profile') }}</label>
+                            <select id='profile' class='form-control' name='profile'>
+                                {% if user.profile == 'user' %}
+                                    <option value='user' selected>{{ _('User') }}</option>
+                                    <option value='manager'>{{ _('Manager') }}</option>
+                                    <option value='admin'>{{ _('Admin') }}</option>
+                                {% elif user.profile == 'manager' %}
+                                    <option value='user'>{{ _('User') }}</option>
+                                    <option value='manager' selected>{{ _('Manager') }}</option>
+                                    <option value='admin'>{{ _('Admin') }}</option>
+                                {% else %}
+                                    <option value='user'>{{ _('User') }}</option>
+                                    <option value='manager'>{{ _('Manager') }}</option>
+                                    <option value='admin' selected>{{ _('Admin') }}</option>
+                                {% endif %}
+                            </select>
+                        </div> <!-- /.form-label-group -->
+                    {% endif %}
+                </div> <!-- /.col -->
+            </div> <!-- /.row -->
+            <div class='row w-100 align-items-center align-content-center text-center'>
+                <div class='col w-100 text-center align-items-center align-content-center'>
+                    <button class='btn btn-primary' type='submit'>{{ _('Update') }}</button>
+                    <button class='btn btn-danger' type='reset'>{{ _('Cancel') }}</button>
+                </div> <!-- /.text-center -->
+            </div> <!-- /.row -->
+        </form>
+    </div> <!-- /.row -->
+{% endblock %}

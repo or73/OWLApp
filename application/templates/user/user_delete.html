@@ -1,0 +1,113 @@
+<!-- user_delete.html -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+            <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Home') }}</a> </li>
+            <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Users') }}</a></li>
+            <li class='breadcrumb-item active'>{{ _('Delete User') }}</li>
+        </ol>
+    </nav>
+    <h1>{{ title }}<small> <strong>-</strong> {{ profile }}</small></h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+    {% endwith %}
+    {% if profile == 'admin' %}
+        <section class='d-flex justify-content-center'>
+            <div class='row h-100 w-100'>
+                <div class='col col-md-5 w-100 mx-auto'>
+                    <table class='table main_menu_table w-75'>
+                        <thead>
+                            <tr>
+                                <th scope='col'>{{ _('User') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class='justify-content-center'>
+                                <td class='text-center create'>
+                                    <a type='button' class='btn btn-outline-success'>
+                                        <i class='fas fa-user-plus i_create'></i>
+                                        <span class='span_menu'> {{ _('Create User') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class='justify-content-center'>
+                                <td class='text-center read'>
+                                    <a type='button' class='btn btn-outline-info'>
+                                        <i class='fas fa-user read i_read'></i>
+                                        <span class='span_menu'> {{ _('Read User') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class='justify-content-center'>
+                                <td class='text-center update'>
+                                    <a type='button' class='btn btn-outline-secondary'>
+                                        <i class='fas fa-user-edit update i_update'></i>
+                                        <span class='span_menu'> {{ _('Update User') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class='justify-content-center'>
+                                <td class='text-center delete'>
+                                    <a type='button' class='btn btn-outline-danger'>
+                                        <i class='fas fa-user-minus delete i_delete'></i>
+                                        <span class='span_menu'> {{ _('Delete User') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> <!-- /.col -->
+                <div class='col col-md-5 w-100 mx-auto'>
+                    <table class='table main_menu_table w-75'>
+                        <thead>
+                            <tr>
+                                <th scope='col'>{{ _('Case') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class='justify-content-center'>
+                                <td class='text-center create'>
+                                    <a type='button' class='btn btn-outline-success'>
+                                        <i class='fas fa-folder-plus i_create'></i>
+                                        <span class='span_menu'> {{ _('Create Case') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class='justify-content-center'>
+                                <td class='text-center read'>
+                                    <a type='button' class='btn btn-outline-info'>
+                                        <i class='fas fa-folder read i_read'></i>
+                                        <span class='span_menu'> {{ _('Read Case') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class='justify-content-center'>
+                                <td class='text-center update'>
+                                    <a type='button' class='btn btn-outline-secondary'>
+                                        <i class='fas fa-folder-open update i_update'></i>
+                                        <span class='span_menu'> {{ _('Update Case') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class='justify-content-center'>
+                                <td class='text-center delete'>
+                                    <a type='button' class='btn btn-outline-danger'>
+                                        <i class='fas fa-folder-minus delete i_delete'></i>
+                                        <span class='span_menu'> {{ _('Delete Case') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> <!-- /.col -->
+            </div> <!-- /.row -->
+        </section>
+
+    {% elif profile == 'manager' %}
+    {% elif profile == 'analyst' %}
+    {% endif %}
+{% endblock %}

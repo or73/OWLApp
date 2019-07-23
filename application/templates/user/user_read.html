@@ -1,0 +1,82 @@
+<!-- show the login page -->
+{% extends 'base_login.html' %}
+{% block content %}
+    <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+            <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Home') }}</a> </li>
+            <li class='breadcrumb-item'><a href='{{ url_for("user_bp.users") }}'>{{ _('Users') }}</a></li>
+            <li class='breadcrumb-item active'>{{ _('Read User Data') }}</li>
+        </ol>
+    </nav>
+    <h1>{{ _('Read User Data') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+    <div class='text-center mb-4'>
+        <img class='mb-4' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}'
+             alt='OWL Logo' width='190' height='75'/>
+        <h1 class='h3 mb-3 font-weight-normal'>{{ _('User Data') }}</h1>
+    </div> <!-- /.text-center -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+        {% endif %}
+    {% endwith %}
+    <div class='row h-100 justify-content-center align-items-center'>
+        <div class='col w-25 h-100 text-center'>
+            <div class='img-thumbnail h-100'>
+                {% if filename %}
+                    <img class='user_img'
+                         src='{{ url_for('user_bp.get_user_image', filename=filename) }}'
+                         alt='{{ user.username }} picture'/>
+                {% else %}
+                    <img class='user_img'
+                         src='{{ url_for("static", filename="dist/img/default_user_img.png") }}'
+                         alt='{{ user.username }} picture'/>
+                {% endif %}
+            </div> <!-- /.img-thumbnail -->
+        </div> <!-- /.col -->
+        <div class='col w-75 h-100'>
+            <div class='table-responsive-lg user_data_table'>
+                <table class='table'>
+                    <tbody>
+                        <tr>
+                            <th scope='row'>{{ _('Name') }}: </th>
+                            <td>{{ user.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope='row'>{{ _('Username') }}:</th>
+                            <td>{{ user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th scope='row'>{{ _('Email') }}:</th>
+                            <td>{{ user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th scope='row'>{{ _('Profile') }}</th>
+                            <td>{{ user.profile }}</td>
+                        </tr>
+                        <tr>
+                            <th scope='row'>{{ _('Active') }}</th>
+                            <td>{{ user.active }}</td>
+                        </tr>
+                        <tr></tr>
+                        {% if profile == 'admin' %}
+                            <tr class='text-center tr_button'>
+                                <td colspan='2'>
+                                    <a class='btn btn-primary'
+                                       type='submit'
+                                       href='{{ url_for("user_bp.update", username=user.username) }}'>
+                                        {{ _('Update') }}
+                                    </a>
+                                    <a class='btn btn-danger'
+                                       type='reset'
+                                       href='{{ url_for("user_bp.delete", username=user.username) }}'>
+                                        {{ _('Delete') }}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div> <!-- /.table-responsive-lg -->
+        </div> <!-- /.col -->
+    </div> <!-- /.row -->
+{% endblock %}
