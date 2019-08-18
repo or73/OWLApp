@@ -16,7 +16,7 @@ class CaseMethod(Case):
         print('type(case_data): ', type(case_data))
         print('case_data[name]: ', case_data['name'])
         cases_collection = mongo.db.cases
-        validate_case = cases_collection.find({'name': case_data['name']})
+        validate_case = cases_collection.find({'case_id': case_data['id']})
         print('validate_case.count', validate_case.count())
         if validate_case.count() == 0:
             print('Case does not exist: {}'.format(case_data['name']))
@@ -90,48 +90,76 @@ class CaseMethod(Case):
     def get_user_cases_and_groups_by_username(username: str) -> dict:
         # Return all cases associated with username
         print('------------------- get_user_cases_and_groups_by_username: -', username, '-')
+        # Load user data
         users_collection = mongo.db.users
         user = users_collection.find_one({'username': username})
         print('user: ', user)
         user_groups_manager = []
         user_groups = []
 
+        # If user has user_groups_manager list, then assign user['user_groups_manager']
         if 'user_groups_manager' in user:
             user_groups_manager = user['user_groups_manager']
+        # If user has user_groups list, then assign user['user_groups']
         if 'user_groups' in user:
             user_groups = user['user_groups']
         print('user_groups_manager: ', user_groups_manager)
         print('user_groups: ', user_groups)
 
+        # Load all cases
         cases_collection = mongo.db.cases
         all_cases = cases_collection.find()
-        print('all_cases: ', all_cases)
+        if all_cases:
+            print('all_cases have been loaded successfully')
+        else:
+            print('Something wrong and cases could not be loaded')
+            return {}
 
-        user_groups_manager_dict = {}
         user_groups_dict = {}
+        counter = 1
+        # Search in all_cases
         for case in all_cases:
-            new_case = {'name': case['name'],
+            print('----------------> {}. case: {}'.format(counter, case))
+            counter += 1
+            new_case = {'case_id': case['case_id'],
+                        'client_id': case['client_id'],
+                        'client_name': case['client_name'],
                         'description': case['description'],
-                        'creation_date': (case['creation_date']).strftime('%A, %d-%B-%Y %I:%M%p')}
-            for group in case['groups']:
-                print('????????????????????\n'
-                      '\tcase: {}\n'
-                      '\tgroup: {}\n'
-                      '\tuser_groups_manager: {}\n'
-                      '\tuser_groups: {}\n'
-                      '????????????????????'.format(case, group, user_groups_manager, user_groups))
-                if group in user_groups_manager:
-                    print('*** MANAGWE *** group {} is a groups_manager'.format(group))
-                    user_groups_manager_dict[group] = new_case
-                elif group in user_groups:
-                    print('*** USER *** group {} is a groups_user'.format(group))
-                    user_groups_dict[group] = new_case
-                print('user_groups_manager_dict: {}'.format(user_groups_manager_dict))
-                print('user_groups_dict: {}'.format(user_groups_dict))
-        user_data_to_return = {'manager': user_groups_manager_dict,
-                               'user': user_groups_dict}
-        print('user_data_to_return: ', user_data_to_return)
-        return user_data_to_return
+                        'groups': {},
+                        'name': case['name'],
+                        'status': case['status'],
+                        'type': case['type'],
+                        'creation_date': (case['creation_date']).strftime('%A, %d-%B-%Y %I:%M%p'),
+                        'due_date': (case['due_date']).strftime('%A, %d-%B-%Y %I:%M%p'),
+                        'last_update': (case['last_modification']).strftime('%A, %d-%B-%Y %I:%M%p')}
+            print('-*-*-*-*-*-*-*-*-*-* {}. new_case: '.format(counter, new_case))
+
+            if len(user_groups) == 0 and len(user_groups_manager) == 0:
+                new_case['groups'] = {}
+                user_groups_dict[case['name']] = new_case
+            else:
+                # Compare each case-group
+                for group in case['groups']:
+                    print('????????????????????\n'
+                          '\tcase: {}\n'
+                          '\tgroup: {}\n'
+                          '\tuser_groups_manager: {}\n'
+                          '\tuser_groups: {}\n'
+                          '????????????????????'.format(case, group, user_groups_manager, user_groups))
+                    if group in user_groups_manager or group in user_groups:
+                        if case['name'] not in user_groups_dict:
+                            # if group is into user_groups_manager elif group is into user_groups
+                            new_case['groups'][group] = {'role': 'Admin'} \
+                                if (group in user_groups_manager) \
+                                else {'role': 'User'}
+                            user_groups_dict[case['name']] = new_case
+                        else:
+                            user_groups_dict[case['name']]['groups'][group] = {'role': 'Admin'} \
+                                if (group in user_groups_manager) \
+                                else {'role': 'User'}
+                print('1. user_groups_dict: {}'.format(user_groups_dict))
+        print('2. user_groups_dict: {}'.format(user_groups_dict))
+        return user_groups_dict
 
     @staticmethod
     def update_case_data(case_name: str, case_data: dict) -> bool:
@@ -146,3 +174,10 @@ class CaseMethod(Case):
             print('case_update: ', case_update)
             return True
         return False
+
+    @staticmethod
+    def validate_case_exist(case_id):
+        # Validate if a provided case_id exists or not in DB
+        print('--------------------- validate_case_exist')
+        cases_collection = mongo.db.cases
+        return cases_collection.find({'case_id': case_id})

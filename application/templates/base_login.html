@@ -1,50 +1,90 @@
-<!-- templates/base.html -->
-<!-- contains common layout and links -->
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="UTF-8"/>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'/>
-    <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'/>
+<html lang='en'>
+	<head>
+		<meta charset = 'UTF-8' />
+		<meta name = 'description' content = 'OWL NAV' />
+		<meta name = 'keywords' content = '' />
+		<meta name = 'author' content = 'OR' />
+		<meta name = 'viewport' content = 'width=device-width, initial-scale=1.0' />
+		<meta http-equiv = 'X-UA-Compatible' content = 'IE=edge' />
 
-    <!--- favicon -->
-    <!--[if IE]><link rel="shortcut icon" href='{{ url_for("static", filename="dist/img/ico/favicon.ico") }}'><![endif]-->
-    <link rel='shortcut icon' type='image/x-icon' href='{{ url_for("static", filename="dist/img/ico/favicon.ico") }}'/>
-    <!-- Bootstrap CSS -->
-    <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/bootstrap/bootstrap.min.css") }}'/>
-    <!-- Fontawesome -->
-    <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/font_awesome/font_awesome.min.css") }}'/>
-    <!-- JQuery UI -->
-    <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/jquery_ui/jquery-ui.min.css") }}'/>
-    <!-- Web Styles -->
-    <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/styles.css") }}'/>
-    <title>{{ _('Authenticated User') }}</title>
-</head>
-<body>
-    {% if current_user.authenticated %}
-        {% include 'navbar.html' %}
-    {% endif %}
-    <main class='container' id='main_container'>
-        {% block content %}
-        {% endblock %}
-    </main> <!-- /.container -->
+		<title>OWL NAV</title>
 
-    <footer id='sticky_footer' class='py-4 bg-dark text-white-50'>
-        <div class='container text-center'>
-            <small><strong>OWL App</strong> © 2019 Copyright - <a href='#'>OR73</a></small>
-        </div>
-    </footer>
+        <!--- favicon -->
+        <!--[if IE]><link rel="shortcut icon" href='{{ url_for("static", filename="dist/img/ico/favicon.ico") }}'><![endif]-->
+        <link rel='shortcut icon' type='image/x-icon' href='{{ url_for("static", filename="dist/img/ico/favicon.ico") }}'/>
 
-    <!-- jQuery -->
-    <script src='{{ url_for("static", filename="dist/js/includes/jquery/jquery.min.js") }}'></script>
-    <!-- Bootstrap JS -->
-    <script src='{{ url_for("static", filename="dist/js/includes/bootstrap/bootstrap.bundle.min.js") }}'></script>
-    <!-- Font Awesome -->
-    <script src='{{ url_for("static", filename="dist/js/includes/font_awesome/font_awesome.min.js") }}'></script>
-    <!-- JQuery UI -->
-    <script src='{{ url_for("static", filename="dist/js/includes/jquery_ui/jquery-ui.min.js") }}'></script>
-    <!-- scripts -->
-    <script src='{{ url_for("static", filename="dist/js/scripts.js") }}'></script>
-</body>
+		<!-- fontawesome 5.10.0 -->
+		<link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/fontawesome/all.min.css") }}' />
+        <!-- bootstrap 4.3 -->
+		<link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/bootstrap/bootstrap.css") }}' />
+       <!-- jQuery UI 1.12.1 -->
+		<link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/jquery_ui/jquery-ui.css") }}' />
+		<!-- flag-icon 3.3.0 -->
+		<link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/flag_icons/flag-icon.css") }}' />
+		<!-- datatables 1.10.18 -->
+		<link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/data_tables/datatables.css") }}' />
+        <!-- bootstrap_select 1.13.9 -->
+        <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/bootstrap_select/bootstrap-select.min.css") }}' />
+		<!-- Custom Styling -->
+		<link rel='stylesheet' href='{{ url_for("static", filename="dist/css/style.css") }}' />
+
+		<!-- modernizr 2.8.3 -->
+		<script type='text/javascript' src='{{ url_for("static", filename="dist/js/includes/modernizr/modernizr.js") }}'></script>
+        <script type=text/javascript>
+          $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
+        <title>{{ _('Authenticated user') }}</title>
+	</head>
+
+	<body class='d-flex flex-column'>
+        <main class='container-fluid' id='mainContainer'>
+            <div id='menu'>
+                <section class='orShowHalfMenu' id='halfMenu'>
+					<div class='container-fluid'>
+                        <!--{ if current_user.authenticated %}-->
+                            {% include 'navbar/navbar.html' %}
+                            <!--{ endblock %}-->
+                        <!-- { endif %} -->
+                    </div> <!-- /.container_fluid -->
+                </section> <!-- /#half_menu -->
+            </div> <!-- /#menu -->
+
+            <div id='pushObj' class='orPanel'>
+                <div class='orPanel orPanelDefault'>
+                    {% include 'navbar/heading.html' %}
+                    <div class='orPanelBody'>
+                        {% block content %}
+                        {% endblock %}
+                    </div> <!-- /.panel-body -->
+                </div> <!-- /.panel -->
+            </div> <!-- /#pushobj -->
+        </main> <!-- /.container -->
+
+        <!-- <footer id='sticky_footer' class='py-4 bg-dark text-white-50'>
+            <div class='container text-center'>
+                <small><strong>OWL App</strong> © 2019 Copyright - <a href='#'>OR73</a></small>
+            </div>
+        </footer>
+        -->
+
+        <!-- jQuery 3.4.1 -->
+		<script src = '{{ url_for("static", filename="dist/js/includes/jquery/jquery.min.js") }}'></script>
+		<!-- fontawesome 5.10.0 -->
+		<script src = '{{ url_for("static", filename="dist/js/includes/fontawesome/all.min.js") }}'></script>
+       <!-- bootstrap 4.3 -->
+		<script src = '{{ url_for("static", filename="dist/js/includes/bootstrap/bootstrap.bundle.min.js") }}'></script>
+       <!-- jQuery UI 1.12.1 -->
+		<script src='{{ url_for("static", filename="dist/js/includes/jquery_ui/jquery-ui.js") }}'></script>
+        <!-- js-cookie 2.2.1 -->
+        <script src='{{ url_for("static", filename="dist/js/includes/js_cookie/js-cookie.js") }}'></script>
+		<!-- datatables 1.10.18 -->
+		<script src = '{{ url_for("static", filename="dist/js/includes/data_tables/datatables.js") }}'></script>
+		<!-- bootstrap 1.2.1 -->
+		<script src='{{ url_for("static", filename="dist/js/includes/bootstrap_show_password/bootstrap-show-password.js") }}'></script>
+        <!-- bootstrap_select 1.13.9 -->
+		<script src='{{ url_for("static", filename="dist/js/includes/bootstrap_select/bootstrap-select.min.js") }}'></script>
+		<!-- Custom Scripts -->
+		<script src = '{{ url_for("static", filename="dist/js/script.js", type = "text/javascript") }}'></script>
+    </body>
 </html>

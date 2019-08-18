@@ -1,4 +1,4 @@
-<!-- show the login page -->
+<!-- show the login page 500.html -->
 {% extends 'base_login.html' %}
 {% block content %}
 
@@ -9,7 +9,7 @@
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
+            <div class='alert alert-danger orAlertMessage'>{{ messages[0] }}</div> <!-- /.message_alert -->
         {% endif %}
     {% endwith %}
 

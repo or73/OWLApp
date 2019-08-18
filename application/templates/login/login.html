@@ -1,61 +1,63 @@
 <!-- templates/login/user_zmenu.html -->
-<!-- show the login page -->
+<!-- show the login page login.html -->
 {% extends 'base.html' %}
 {% block content %}
-    <div class='row'>
-        <div class='col col-12 text-center mb-4'>
-            <img class='logo_img' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}' alt='OWL Logo' width='190' height='75'/>
-            <h1 class='h3 mb-3 font-weight-normal'>{{ _('User Login') }}</h1>
-        </div> <!-- /.text-center -->
-    </div> <!-- /.row -->
+    <div class='container orLoginContainer'>
+        <div class='row'>
+            <div class='col col-12 text-center mb-4'>
+                <img class='orLogoImg' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}' alt='OWL Logo' width='190' height='75'/>
+                <h1 class='h3 mb-3 font-weight-normal'>{{ _('User Login') }}</h1>
+            </div> <!-- /.text-center -->
+        </div> <!-- /.row -->
 
-    <div class='row'>
-        <div class='col col-12'>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
-                {% endif %}
-            {% endwith %}
-        </div> <!-- /.col -->
-    </div> <!-- /.row -->
+        <!--<div class='row'>
+            <div class='col col-12'>
+                { with messages = get_flashed_messages() %}
+                    { if messages %}
+                        <div class='alert alert-danger alert_message'>{ messages[0] }}</div> !-- /.message_alert --
+                    { endif %}
+                { endwith %}
+            </div> !-- /.col --
+        </div> !-- /.row -->
 
-    <div class='row justify-content-center'>
-        <div class='col col-md-6 justify-content-center align-items-center'>
-        <!--<form class='form-signin col-12 create_form' method='POST' action='{ url_for("login_bp.login") }}'>-->
-            <form class='form-signin col create_form' method='POST' action='{{ url_for("login_bp.login") }}'>
-                <div class='row'>
-                    <div class='col col-12'>
-                        <div class='form-label-group'>
-                            <input type='text' id='inputEmail' class='form-control' name='email' placeholder='{{ _('Email Address') }}' required autofocus/>
-                            <label for='inputEmail'>{{ _('Email Address or username') }}</label>
-                        </div> <!-- /.form-label-group -->
-                    </div> <!-- /.col -->
-                </div> <!-- /.row -->
+        <div class='row justify-content-center'>
+            <div class='col col-md-6 justify-content-center align-items-center'>
+            <!--<form class='form-signin col-12 create_form' method='POST' action='{ url_for("login_bp.login") }}'>-->
+                <form class='orFormSignIn col create_form' method='POST' action='{{ url_for("login_bp.login") }}'>
+                    <div class='row'>
+                        <div class='col col-12'>
+                            <div class='form-label-group'>
+                                <input type='text' id='inputEmail' class='form-control' name='email' placeholder='{{ _('Email Address') }}' required autofocus/>
+                                <label for='inputEmail'>{{ _('Email Address or username') }}</label>
+                            </div> <!-- /.form-label-group -->
+                        </div> <!-- /.col -->
+                    </div> <!-- /.row -->
 
-                <div class='row'>
-                    <div class='col col-12'>
-                        <div class='form-label-group'>
-                            <input type='password' id='inputPassword' class='form-control' name='password' placeholder='{{ _('Password') }}' required/>
-                            <label for='inputPassword'>{{ _('Password') }}</label>
-                        </div> <!-- /.form-label-group -->
-                    </div> <!-- /.col -->
-                </div> <!-- /.row -->
+                    <div class='row'>
+                        <div class='col col-12'>
+                            <div class='form-label-group'>
+                                <input type='password' id='inputPassword' class='form-control' name='password' placeholder='{{ _('Password') }}' required/>
+                                <label for='inputPassword'>{{ _('Password') }}</label>
+                            </div> <!-- /.form-label-group -->
+                        </div> <!-- /.col -->
+                    </div> <!-- /.row -->
 
-                <div class='row h-100 w-100'>
-                    <div class='col my-auto'>
-                        <div class='form-check'>
-                            <input type='checkbox' class='form-check-input' name='remember' value='remember-me' id='remember_me'/>
-                            <label class='form-check-label' for='remember_me'>{{ _('Remember me') }}</label>
-                        </div> <!-- /.checkbox -->
-                    </div> <!-- /.col -->
-                </div> <!-- /.row -->
+                    <div class='row h-100 w-100'>
+                        <div class='col my-auto'>
+                            <div class='form-check'>
+                                <input type='checkbox' class='form-check-input' name='remember' value='remember-me' id='rememberMe'/>
+                                <label class='form-check-label' for='rememberMe'>{{ _('Remember me') }}</label>
+                            </div> <!-- /.checkbox -->
+                        </div> <!-- /.col -->
+                    </div> <!-- /.row -->
 
-                <div class='row'>
-                    <div class='col col-12 text-center'>
-                        <button class='btn btn-lg btn-primary w-50' type='submit'>{{ _('Sign In') }}</button>
-                    </div> <!-- /.col -->
-                </div> <!-- /.row -->
-            </form>
-        </div> <!-- /.col -->
-    </div> <!-- /.row -->
+                    <div class='row'>
+                        <div class='col col-12 text-center'>
+                            <button class='btn btn-lg btn-primary w-50' type='submit'>{{ _('Sign In') }}</button>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.row -->
+                </form>
+            </div> <!-- /.col -->
+        </div> <!-- /.row -->
+    </div> <!-- /.container -->
 {% endblock %}

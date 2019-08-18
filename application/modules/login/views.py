@@ -89,8 +89,11 @@ def login():
                 print('Successful Login')
                 print('session: ', session)
                 logger.info('LOGIN - <login>: User {} has logged in successfully '.format(email))
-                return redirect(url_for('user_bp.users',
-                                        languages=languages,
+                print('-*-*-*-*-*-*-*-*-*-*-*-*-*- User Login')
+
+                language_class = 'flag-icon-co' if session['language'] == 'es' else 'flag-icon-us'
+                return redirect(url_for('case_bp.cases_user_login',
+                                        language_class=language_class,
                                         state=state))
         else:
             flash('Some provided data is not valid or wrong')

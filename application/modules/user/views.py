@@ -54,6 +54,7 @@ def users():
                         '\t\tUSER - <users>: users loaded successfully - len(user_method): {}'
                         .format(current_user.username, len(user_method)))
         return render_template('user/user_zmenu.html',
+                               language_class='flag-icon-co' if session['language'] == 'es' else 'flag-icon-us',
                                profile=profile,
                                state=state,
                                users=user_method)
@@ -353,14 +354,24 @@ def update(username: str):
 
 @user_bp.route('/language/<language>')
 def set_language(language=None):
+    print('----------------- user_bp.route(/language/{})'.format(language))
     session['language'] = language
+    print('session[language]: ', session['language'])
+    print('1. current_user.language: ', current_user.language)
+
+    language_class = 'flag-icon-co' if language == 'es' else 'flag-icon-us'
+
     logger = init_logger(__name__, testing_mode=False)
     try:
         logger.error('Current User: {}\n'
                      '\t\tUSER - <set_language>: language <{}> updated'
                      .format(current_user.username, language))
-        return redirect(url_for('user_bp.users',
+        return redirect(url_for('case_bp.cases_user_login',
+                                language_class=language_class,
                                 profile=session['profile']))
+        # return redirect(url_for('user_bp.users',
+        #                        language_class=language_class,
+        #                        profile=session['profile']))
     except Exception as e:
         print('Exception in /language/{}'.format(language))
         print('error: ', e)

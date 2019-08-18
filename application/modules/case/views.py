@@ -21,7 +21,7 @@ case_bp = Blueprint('case_bp', __name__)
 # --------------------------------------- cases
 @case_bp.route('/case/<case_name>')
 @login_required
-def case_environment(case_name: str):
+def case_environment (case_name: str):
     # Create case environment
     print('------------------- case_bp.route(/case/{})'.format(case_name))
     logger = init_logger(__name__, testing_mode=False)
@@ -74,56 +74,61 @@ def cases():
                            state=state)
 
 
+@case_bp.route('/cases/allGroups/')
+@login_required
+def allGroups():
+    print('----------------- case_bp.route(/cases/allGroups/)')
+    allGroupsName = CaseMethod.get_all_groups_name()
+    groupsList = []
+    print('allGroupsName: ', allGroupsName)
+    for group in allGroupsName:
+        groupsList.append(group['name'])
+    print('groupsList: ', groupsList)
+    return {'groupsList': groupsList}
+
+
 @case_bp.route('/cases/<username>')
 @login_required
-def cases_user(username: str):
+def cases_user (username: str):
     print('------------------ case_bp.route(/case/{})'.format(username))
     logger = init_logger(__name__, testing_mode=False)
-    current_user_profile = current_user.profile
-    if current_user_profile == 'user':
+    # if current_user_profile == 'user':
+    print('Current User: {}\n'
+          '\t\tCASE - <cases/{}>: current user data has been loaded successfully'
+          .format(current_user.username, username))
+    logger.info('Current User: {}\n'
+                '\t\tCASE - <cases/{}>: current user data has been loaded successfully'
+                .format(current_user.username, username))
+    current_user_cases_and_groups = CaseMethod.get_user_cases_and_groups_by_username(username)
+    
+    if current_user_cases_and_groups:
         print('Current User: {}\n'
-              '\t\tCASE - <cases/{}>: current user data has been loaded successfully'
+              '\t\tCASE - <cases/{}>: current_user_cases_and_groups loaded successfully'
               .format(current_user.username, username))
         logger.info('Current User: {}\n'
-                    '\t\tCASE - <cases/{}>: current user data has been loaded successfully'
+                    '\t\tCASE - <cases/{}>: current_user_cases_and_groups loaded successfully'
                     .format(current_user.username, username))
-        current_user_cases_and_groups = CaseMethod.get_user_cases_and_groups_by_username(username)
-
-        if current_user_cases_and_groups:
-            print('Current User: {}\n'
-                  '\t\tCASE - <cases/{}>: current_user_cases_and_groups loaded successfully'
-                  .format(current_user.username, username))
-            logger.info('Current User: {}\n'
-                        '\t\tCASE - <cases/{}>: current_user_cases_and_groups loaded successfully'
-                        .format(current_user.username, username))
-        else:
-            print('Current User: {}\n'
-                  '\t\tCASE - <cases/{}>: current_user_cases_and_groups could not be loaded'
-                  .format(current_user.username, username))
-            logger.warning('Current User: {}\n'
-                           '\t\tCASE - <cases/{}>: current_user_cases_and_groups could not be loaded'
-                           .format(current_user.username, username))
-
-        print('current_user_cases_and_groups: ', current_user_cases_and_groups)
-        print('current_user_cases_and_groups[manager]: ', current_user_cases_and_groups['manager'])
-        print('current_user_cases_and_groups[user]: ', current_user_cases_and_groups['user'])
-        return render_template('case/case_user_cases.html',
-                               manager=current_user_cases_and_groups['manager'],
-                               user=current_user_cases_and_groups['user'],
-                               profile=current_user.profile)
     else:
         print('Current User: {}\n'
-              '\t\tCASE - <cases/{}: current user data could not be loaded'
+              '\t\tCASE - <cases/{}>: current_user_cases_and_groups could not be loaded'
               .format(current_user.username, username))
         logger.warning('Current User: {}\n'
-                       '\t\tCASE - <cases/{}: current user data could not be loaded'
+                       '\t\tCASE - <cases/{}>: current_user_cases_and_groups could not be loaded'
                        .format(current_user.username, username))
-    return False
+    
+    print('current_user_cases_and_groups: ', current_user_cases_and_groups)
+    
+    return render_template('case/case_user_cases.html',
+                           cases=current_user_cases_and_groups,
+                           language_class='flag-icon-co' if session['language'] == 'es' else 'flag-icon-us',
+                           profile=current_user.profile,
+                           state=request.args.get('state'),
+                           title='User Cases')
 
 
 @case_bp.route('/cases/user/login')
 @login_required
-def cases_user_login():
+def cases_user_login ():
     print('------------------ case_bp.route(/cases/user/login)')
     current_user_username = current_user.username
     logger = init_logger(__name__, testing_mode=False)
@@ -131,63 +136,82 @@ def cases_user_login():
                 '\t\tCASE - <cases/user/login>: current user username: {}'
                 .format(current_user.username, current_user_username))
     print('current_user_username: ', current_user_username)
+    
     return redirect(url_for('case_bp.cases_user',
+                            state=request.args.get('state'),
                             username=current_user_username))
 
 
 @case_bp.route('/case/detail/<case_name>')
 @login_required
-def case_detail(case_name: str):
+def case_detail (case_name: str):
     print('------------------- case_bp.route(/case/detail/{})'.format(case_name))
     # Show all case data, and allows to add information (objects + meta-data) to case
     return None
 
 
-@case_bp.route('/case/create/', methods=['GET', 'POST'])
+@case_bp.route('/case/create/', methods=['POST'])
 @login_required
 def create():
     # Case create
     print('----------------- case_bp.route(/case/create/) - {}'.format(request.method))
     logger = init_logger(__name__, testing_mode=False)
     profile = session['profile']
-    if request.method == 'GET':
-        all_groups = GroupMethod.get_all_group_names()
-        if len(all_groups) > 0:
-            logger.info('Current User: {}\n'
-                        '\t\tCASE - <create - GET>: all_groups have been loaded successfully - len(all_groups): {}'
-                        .format(current_user.username, len(all_groups)))
-        else:
-            logger.warning('Current User: {}\n'
-                           '\t\tCASE - <create - GET>: all_groups could not be loaded - 0')
-        return render_template('case/case_create.html',
-                               groups=all_groups,
-                               profile=profile)
-    elif request.method == 'POST':
-        groups = request.form.getlist('current_case_groups')
-        case_data = {
-            '_id': 1,
-            'name': request.form.get('name'),
-            'description': request.form.get('description'),
-            'groups': groups
-        }
-        case_created = CaseMethod.create_case(case_data)
-        if case_created:
+    currentUserUsername = current_user.username
+    # if request.method == 'POST':
+    caseId = request.form.get('id')
+    caseGroup = request.form.get('group')
+    caseName = request.form.get('name')
+    caseDescription = request.form.get('description')
+    caseType = request.form.get('type')
+    caseStatus = request.form.get('status')
+    caseDueDate = request.form.get('dueDate')
+    caseClientName = request.form.get('clientName')
+    caseClientId = request.form.get('clientId')
+    caseClientDescription = request.form.get('clientDescription')
+    validateExistUser = CaseMethod.validate_case_exist(caseId)
+    print('validate_exist_user: ', validateExistUser.count())
+    print('*** --- caseGroup: ', caseGroup)
+    
+    # Validate if case_id does not exist
+    if validateExistUser.count() == 0:
+        print('case with ID: {} - does not exist...'.format(caseId))
+        newCase = {'id': caseId,
+                   'name': caseName,
+                   'description': caseDescription,
+                   'type': caseType,
+                   'status': caseStatus,
+                   'groups': [caseGroup],
+                   'due_date': caseDueDate,
+                   'client_name': caseClientName,
+                   'client_id': caseClientId,
+                   'client_description': caseClientDescription}
+        print('NEW CASE - data: {}'.format(newCase))
+        caseCreated = CaseMethod.create_case(newCase)
+        if caseCreated:
             flash('Case created successfully')
             logger.info('Current User: {}\n'
                         '\t\tCASE - <create - POST>: Case \'{}\' has been created successfully'
-                        .format(current_user.username, case_data['name']))
+                        .format(current_user.username, caseName))
         else:
             flash('Case could not be created...')
             logger.warning('Current User: {}\n'
                            '\t\tCASE - <create - POST>: Case \'{}\' could not be created'
-                           .format(current_user.username, case_data['name']))
-    return redirect(url_for('case_bp.cases',
-                            profile=profile))
+                           .format(current_user.username, caseName))
+    else:
+        print('Provided case ID already exist...')
+        flash('Case could not be created... Provided case ID already exist')
+        logger.warning('Current User: {}\n'
+                       '\t\tCASE - <create - POST>: Case \'{}\' could not be created'
+                       .format(current_user.username, caseId))
+    return redirect(url_for('case_bp.cases_user',
+                            state=request.args.get('state'),
+                            username=currentUserUsername))
 
 
 @case_bp.route('/case/delete/<case_name>')
 @login_required
-def delete(case_name: str):
+def delete (case_name: str):
     # Case delete
     print('----------------- case_bp.route(/case/delete/)')
     print('case_name: ', case_name)
@@ -210,7 +234,7 @@ def delete(case_name: str):
 
 @case_bp.route('/case/read/<case_name>')
 @login_required
-def read(case_name: str):
+def read (case_name: str):
     # Case read
     print('----------------- case_bp.route(/case/read/)')
     print('case_name: ', case_name)
@@ -244,7 +268,7 @@ def read(case_name: str):
 
 @case_bp.route('/case/update/<case_name>', methods=['GET', 'POST'])
 @login_required
-def update(case_name: str):
+def update (case_name: str):
     # Case update
     print('----------------- case_bp.route(/case/update/) - {}'.format(request.method))
     print('case_name: ', case_name)
@@ -252,6 +276,7 @@ def update(case_name: str):
     profile = session['profile']
     if request.method == 'GET':
         case_data = CaseMethod.get_case_by_case_name(case_name)
+        print('case_data: ', case_data)
         if case_data:
             print('CASE - <update - GET>: case_data loaded successfully - case_name: {}'.format(case_data['name']))
             logger.info('Current User: {}\n'
@@ -274,10 +299,11 @@ def update(case_name: str):
         print('all_groups: ', all_groups)
         all_groups = CaseMethod.filter_groups(all_groups, case_data['groups'])
         print('*** all_groups: ', all_groups)
-        return render_template('case/case_update.html',
-                               case=case_data,
-                               groups=all_groups,
-                               profile=profile)
+        return case_data
+        # return render_template('case/case_update.html',
+        #                case=case_data,
+        #                groups=all_groups,
+        #                profile=profile)
     elif request.method == 'POST':
         groups = request.form.getlist('current_case_groups')
         case_data = {

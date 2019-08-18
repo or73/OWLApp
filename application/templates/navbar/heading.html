@@ -1,0 +1,49 @@
+<div class='orPanelHeading'>
+    <header>
+        <div class='orHeaderTitle'>
+            <span class='orHeaderTitleText'>{{ title }}</span>
+            <span class='orAlertMessageSpan'>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class='alert alert-danger orAlertMessage'>{{ messages[0] }}</div> <!-- /.message_alert -->
+                    {% endif %}
+                {% endwith %}
+            </span>
+        </div> <!-- /.header_title -->
+
+        <ul class='orNavBar'>
+            <li>
+                <a class='btn orButtonBlue' id='createCaseBtn' href='#' role='button'><i class='fal fa-plus orButtonIcon'></i>Create New Case</a>
+            </li>
+            <li>
+                <a href='#' class='orDropdownMenu'>
+                    <i class='fad fa-ellipsis-h'></i>
+                </a>
+                <ul>
+                    <li><a id='caseImport' href='#'>Case - Import</a></li>
+                    <li><a id='caseExport' class='orDisableLink' href='#'>Case - Export</a></li>
+                </ul>
+            </li>
+            <li>
+                <!--<a href='#en' class='dropdown_menu' id='language_icon'>-->
+                <a href='#' class='orDropdownMenu' id='languageIcon'>
+                    <span id='languageIconSpan' class='flag-icon {{ language_class }}'></span>
+                </a>
+                <ul>
+                    <li>
+                        <a href='{{ url_for("user_bp.set_language", language="en") }}' class='orDropdownMenuLanguage' id='enIcon'>
+                        <!--<a href='#en' id='en_icon'>-->
+                            <span class='flag-icon flag-icon-us'></span>English
+                        </a>
+                    </li>
+                    <li>
+                        <a href='{{ url_for("user_bp.set_language", language="es") }}' class='orDropdownMenuLanguage' id='esIcon'>
+                        <!--<a href='#co' id='es_icon'>-->
+                            <span class='flag-icon flag-icon-co'></span>Español
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </header>
+</div> <!-- /.panel -->

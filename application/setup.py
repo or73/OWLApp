@@ -4,7 +4,6 @@ Description: setup the App
 This will have the function to create the App which will initialize the database and register all blueprints.
 Copyright (c) 2019. This Application has been developed by OR73.
 """
-import logging
 from flask import flash, Flask, g, redirect, Markup, render_template, request, session, url_for
 
 from werkzeug.exceptions import HTTPException
@@ -13,8 +12,6 @@ from flask_babel import Babel
 from flask_pymongo import PyMongo
 # We are using 'flask_pymongo' to make the DB connection object available in flask app context.
 # Internally 'flask_pymongo' module uses mongoDB's python client api 'PyMongo'
-
-# from .instance import Config
 from .db_conf import JSONEncoder, URI
 from application.modules import (AuxFuncs, init_logger)
 
@@ -52,8 +49,6 @@ def create_app():
     # file_handler = FileHandler.file_handler()
     logger = init_logger(__name__, testing_mode=False)
     print('-*-*-*-*-*-*-*-*-*-*-*-*-*- logger: ', logger)
-    # logger.addHandler(file_handler)
-    # logger.setLevel(logging.DEBUG)
     logger.info('SETUP - <create-app>: Plugins initialized successfully')
 
     # Use the modified encoder class to handle ObjectId & datetime object while jsonify the response
@@ -64,7 +59,6 @@ def create_app():
     def load_user(user_id) -> User:  # (session_token):
         print('Validating user - user_id: ', user_id)
         logger.info('SETUP - <create-app / load_user> Validating user: {}'.format(user_id))
-        # user_id = UserMethod.get_id_by_session_token(session_token)
         user_to_return = UserMethod.load_user(user_id)
         if user_to_return:
             logger.info('SETUP - <create-app / load_user> User loaded successfully:\n{}'.format(user_to_return))

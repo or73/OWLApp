@@ -1,91 +1,496 @@
 <!-- templates/login/case_zmenu.html -->
-<!-- show the login page -->
+<!-- show the login page case_user_case.html -->
 {% extends 'base_login.html' %}
 {% block content %}
-    <nav aria-label='breadcrumb'>
-        <ol class='breadcrumb'>
-            <li class='breadcrumb-item'><a href='{{ url_for("case_bp.cases") }}'>{{ _('Home') }}</a> </li>
-            <li class='breadcrumb-item'><a href='{{ url_for("case_bp.cases") }}'>{{ _('Cases') }}</a></li>
-            <li class='breadcrumb-item active'>{{ _('User Cases') }}</li>
-        </ol>
-    </nav>
-    <h1>{{ _('User Cases') }}<small> <strong>-</strong> {{ profile }}</small></h1>
+    <div id='eventPanel' class='panel-content d-flex align-items-stretch'>
+        <div id='eventPanelLeft'>
+            <div id='eventPaneLeftSearch' class='form-group has-search'>
+                <!--<span class='fad fa-search form-control-feedback'></span>
+                <input class='form-control' type='search' placeholder='Search case names, IDs, ...' aria-label='Search case names, IDs, ...' aria-describedby='inputGroupPrepend'/>-->
+            </div>
+            <div id='eventPanelLeftFilters'>
+                <div id='filtersTitle'>
+                    <h3>{{ _('Status Filters') }}</h3>
+                </div>
+                <div id='filtersInput'>
+                    <form action='#' class='orCustomCheckbox'>
+                        <div class='row'>
+                            <input type='checkbox' id='inputDraft' checked name='caseFilter' value='Draft' />
+                            <label for='inputDraft'>{{ _('Draft') }}
+                            </label>
+                        </div>
+                        <div class='row'>
+                            <input type='checkbox' id='inputActive' checked name='caseFilter' value='Active' />
+                            <label for='inputActive'>{{ _('Active') }}
+                            </label>
+                        </div>
+                        <div class='row'>
+                            <input type='checkbox' id='inputOnHold' checked name='caseFilter' value='On hold' />
+                            <label for='inputOnHold'>{{ _('On hold') }}
+                            </label>
+                        </div>
+                        <div class='row'>
+                            <input type='checkbox' id='inputClosed' checked name='caseFilter' value='Closed' />
+                            <label for='inputClosed'>{{ _('Closed') }}
+                            </label>
+                        </div>
+                    </form>
+                </div> <!-- /#filters_input -->
+                <div id='filtersReset'>
+                    <button class='btn btn-sm' id='resetButton'>{{ _('Reset Filters') }}</button>
+                </div> <!-- /#filters_reset -->
+            </div> <!-- /#eventpanel_left_filters -->
+        </div> <!-- /#eventpanel_left_filters -->
 
-    <div class='row'>
-        <div class='col'>
-            <div class='text-center mb-4'>
-                <img class='mb-4' src='{{ url_for("static", filename="dist/img/OWL_logo/OWL_logo_md.png") }}' alt='OWL Logo' width='190' height='75'/>
-                <h1 class='h3 mb-3 font-weight-normal'>{{ _('User Cases') }}</h1>
-            </div> <!-- /.text-center -->
-        </div> <!-- /.col -->
-    </div> <!-- /.row -->
+        <div id='eventPanelRight'>
+            <table id='eventPanelRightTable' class='table table-hover'>
+                <thead>
+                    <tr>
+                        <th scope='col'>{{ _('SELECT') }}</th>
+                        <th scope='col'>{{ _('GROUP') }}</th>
+                        <th scope='col'>{{ _('CASE NAME') }}</th>
+                        <th scope='col'>{{ _('CASE TYPE') }}</th>
+                        <th scope='col'>{{ _('CLIENT NAME') }}</th>
+                        <th scope='col'>{{ _('CASE ID') }}</th>
+                        <th scope='col'>{{ _('DUE DATE') }}</th>
+                        <th scope='col'>{{ _('CREATED') }}</th>
+                        <th scope='col'>{{ _('LAST UPDATED') }}</th>
+                        <th scope='col'>{{ _('STATUS') }}</th>
+                        <th scope='col'></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for name, case in cases.items() %}
+                        <tr>
+                            <td>
+                                <input type='checkbox' id='{{ name }}' name='selectedCase' value='{{ name }}'  />
+                                <label for='{{ name }}'></label>
+                            </td>
+                            <td>
+                                {% for group, user in case.groups.items() %}
+                                    <!--<p>GROUP: { group }}</p>
+                                    <p>ROLE: { user.role }}</p>-->
+                                    <p>{{ group }}
+                                        <small><i class='fad fa-angle-double-left'></i></small>
+                                        <span class='orUserProfile'>
+                                            {{ user.role }} <!-- Admin -->
+                                        </span>
+                                        <small><i class='fad fa-angle-double-right'></i></small>
+                                    </p>
+                                {% endfor %}
+                            </td>
+                            <td><a href='#' class='orName'><strong>{{ case.name }}</strong></a> </td>
+                            <td>{{ case.type }}</td>
+                            <td>{{ case.client_name }}</td>
+                            <td>{{ case.case_id }}</td>
+                            <td>{{ case.due_date }}</td>
+                            <td>{{ case.creation_date }}</td>
+                            <td>{{ case.last_update }}</td>
+                            <td>
+                                <span class='orCaseStatusIcon orNormalFont'>
+                                    {% if case.status == 'Active' %}
+                                        <i class='fad fa-play orCaseStatusIconPlay'></i>
+                                    {% elif case.status == 'Draft' %}
+                                        <i class='fad fa-circle orCaseStatusIconDraft'></i>
+                                    {% elif case.status == 'On hold' %}
+                                        <i class='fad fa-pause orCaseStatusIconOnHold'></i>
+                                    {% elif case.status == 'Closed' %}
+                                        <i class='fad fa-stop orCaseStatusIconClosed'></i>
+                                    {% endif %}
+                                    {{ case.status }}
+                                </span></td>
+                            <td>
+                                <div class='dropdown'>
+                                    <a class='btn btn-outline-dark dropdown-toggle' href='#' role='button'
+                                       id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true'
+                                       aria-expanded='false'>
+                                        <i class='fas fa-caret-down'></i>
+                                    </a>
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class='alert alert-danger alert_message'>{{ messages[0] }}</div> <!-- /.message_alert -->
-        {% endif %}
-    {% endwith %}
+                                    <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+                                        <a class='dropdown-item orEditCase' id='{{ case.name }}' href='#'>{{ _('Edit case') }}</a>
+                                        <a class='dropdown-item' href='#'>{{ _('Export case') }}</a>
+                                        <a class='dropdown-item orDeleteItemMenu' href='#'>{{ _('Delete case') }}</a>
+                                    </div> <!-- /.dropdown-menu -->
+                                </div> <!-- /.dropdown -->
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> <!-- /#eventPanelRight -->
 
-    <div class='row h-100 justify-content-center align-items-center'>
-        <div class='row text-center justify-content-center'>
-            <div class='col mx-auto justify-content-center'>
-                <!-- All Groups -->
-                {% for group, case in manager.items() %}
-                    <div class='case_wrapper py-3'>
-                        <div class='card'>
-                            <div class='row'>
-                                <div class='col-md-4'>
-                                    <img src='{{ url_for("static", filename="dist/img/default_user_img.png") }}'
-                                         class='case_img' alt='case image'/>
-                                </div> <!-- /.col -->
-                                <div class='col-md-8 px-3'>
-                                    <div class='card-block px-3 text-left'>
-                                        <h3 class='card-title'>{{ case.name }}</h3>
-                                        <p class='card-text'><strong>Description:</strong> {{ case.description }}</p>
-                                        <p class='card-text'><strong>Creation Date:</strong> {{ case.creation_date }}</p>
-                                        <p class='card-text case_as_group_manager'
-                                           data-toggle='tooltip' data-placement='top' title='{{ _('Group Manager') }}'>
-                                            <strong>Group:</strong> {{ group }}
-                                        </p>
-                                        <a href='{{ url_for('case_bp.case_environment', case_name=case.name) }}'
-                                           class='btn btn-dark'>
-                                            {{ _('Case Detail') }}
-                                        </a>
-                                        </div> <!-- /.card-block -->
-                                </div> <!-- /.col -->
-                            </div> <!-- /.row -->
-                        </div> <!-- /.card -->
-                    </div> <!-- /.container -->
-                {% endfor %}
+        <!--
+            ----------------------- Dialog - Create New Case -----------------------
+        -->
+        <div id='dialogCreateNewCase' title='Create New Case' class='orEmergentDialog'>
+            <div id='formAlert' class='alert alert-dark'>
+                {{ _('All fields marked with') }} <span class='orRequiredField'>*</span> {{ _('are required') }}
+            </div> <!-- /#form_alert -->
 
-                {% for group, case in user.items() %}
-                    <div class='case_wrapper py-3'>
-                        <div class='card'>
-                            <div class='row'>
-                                <div class='col-md-4'>
-                                    <img src='{{ url_for("static", filename="dist/img/default_user_img.png") }}'
-                                         class='case_img' alt='case image'/>
-                                </div> <!-- /.col -->
-                                <div class='col-md-8 px-3'>
-                                    <div class='card-block px-3 text-left'>
-                                        <h3 class='card-title'>{{ case.name }}</h3>
-                                        <p class='card-text'><strong>Description:</strong> {{ case.description }}</p>
-                                        <p class='card-text'><strong>Creation Date:</strong> {{ case.creation_date }}</p>
-                                        <p class='card-text case_as_group_user'
-                                           data-toggle='tooltip' data-placement='top' title='{{ _('Group User') }}'>
-                                            <strong>Group:</strong> {{ group }}
-                                        </p>
-                                        <a href='{{ url_for('case_bp.case_environment', case_name=case.name) }}'
-                                           class='btn btn-dark'>
-                                            {{ _('Case Detail') }}
-                                        </a>
-                                    </div> <!-- /.card-block -->
-                                </div> <!-- /.col -->
-                            </div> <!-- /.row -->
-                        </div> <!-- /.card -->
-                    </div> <!-- /.container -->
-                {% endfor %}
-            </div> <!-- /.col -->
-        </div> <!-- /.row -->
-    </div> <!-- /.row -->
+            <form id='formCreateNewCase' action='{{ url_for("case_bp.create") }}' method='post'>
+                <div class='form-group row'>
+                    <label for='caseInputName' class='col-2 col-form-label'>
+                        <span class='orRequiredField'>*</span><strong>{{ _('Name') }}</strong>:
+                    </label>
+                    <div class='col-10'>
+                        <input id='caseInputName' name='name' type='text' class='form-control'
+                               placeholder='{{ _('Case Name') }}' aria-describedby='caseNameHelp'/>
+                        <i class='fad fa-times orInputIconTimes' id='caseNameIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseNameIconCheck'></i>
+                        <small id='caseNameHelp'
+                               class='form-text text-muted orInvalidInput orAlertMessageFormValidation'>
+                            {{ _('Input a valid Case name') }}
+                        </small>
+                    </div> <!-- /.col -->
+                </div> <!-- /.form-group -->
+
+                <div class='form-group row'>
+                    <label for='caseInputId' class='col-2 col-form-label'>
+                        <span class='orRequiredField'>*</span><strong>ID</strong>:
+                    </label>
+                    <div class='col-10'>
+                        <input id='caseInputId' name='id' type='text' class='form-control'
+                               placeholder='{{ _('Case ID') }}' aria-describedby='caseIdHelp' />
+                        <i class='fad fa-times orInputIconTimes' id='caseIdIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseIdIconCheck'></i>
+                        <small id='caseIdHelp'
+                               class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                            {{ _('Input a valid Case ID') }}
+                        </small>
+                    </div> <!-- /.col -->
+                </div> <!-- /.form-group -->
+
+                <div class='form-group row'>
+                    <label for='caseTextareaDescription' class='col-2 col-form-label'>
+                        <span class='orRequiredField'>*</span><strong>{{ _('Description') }}</strong>:
+                    </label>
+                    <div class='col-10'>
+                        <textarea id='caseTextareaDescription' name='description' class='form-control' rows='4'
+                                  placeholder='Case Description' aria-describedby='caseDescriptionHelp'></textarea>
+                        <i class='fad fa-times orInputIconTimes' id='caseDescriptionIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseDescriptionIconCheck'></i>
+                        <small id='caseDescriptionHelp'
+                               class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                            { _('Input a valid Case Description') }}
+                        </small>
+                    </div> <!-- /.col -->
+                </div> <!-- /.form-group -->
+
+                <input id='caseHiddenInputType' name='type' hidden aria-label=''/>
+                <div class='form-group row'>
+                    <div class='orCardName row'>
+                        <label for='caseSelectType' class='orLabelTitle col-2 col-form-label'>
+                            <strong>{{ _('Type') }}</strong>:
+                        </label>
+                        <div class='orInputWrapper col-10'>
+                            <div class='orCardGroup orCardGroupType'>
+                                <div class='orCardInput orCardInputType'></div>
+                                <div class='orArrow'>
+                                    <i class='fad fa-caret-down'></i>
+                                </div> <!-- /.orArrow -->
+
+                                <ul class='orCardList orCardListType' aria-describedby='cardListTypeHelp'>
+                                    <li value='{{ _('Audit') }}'><i class='fad fa-eye orCaseStatusIconAudit'></i>{{ _('Audit') }} </li>
+                                    <li value='{{ _('Fraud') }}'><i class='fad fa-user-secret orCaseStatusIconFraud'></i>{{ _('Fraud') }} </li>
+                                    <li value='{{ _('ICAC') }}'><i class='fad fa-baby orCaseStatusIconIcac'></i>{{ _('ICAC') }} </li>
+                                    <li value='{{ _('Legal') }}'><i class='fad fa-balance-scale orCaseStatusIconLegal'></i>{{ _('Legal') }} </li>
+                                    <li value='{{ _('Security') }}'><i class='fad fa-user-shield orCaseStatusIconSecurity'></i>{{ _('Security') }} </li>
+                                </ul>
+                            </div> <!-- /.orCardGroup -->
+                        </div> <!-- /.orInputWrapper -->
+                    </div> <!-- /orCardName -->
+                </div> <!-- /.form-group -->
+
+                <input id='caseHiddenInputStatus' name='status' hidden aria-label=''/>
+                <div class='form-group row'>
+                    <div class='orCardName row'>
+                        <label for='caseSelectStatus' class='orLabelTitle col-2 col-form-label'>
+                            <strong>{{ _('Status') }}</strong>:
+                        </label>
+                        <div class='orInputWrapper col-10'>
+                            <div class='orCardGroup orCardGroupStatus'>
+                                <div class='orCardInput orCardInputStatus'></div>
+                                <div class='orArrow'>
+                                    <i class='fad fa-caret-down'></i>
+                                </div> <!-- /.orArrow -->
+
+                                <ul class='orCardList orCardListStatus'>
+                                    <li value='{{ _('Draft') }}'>
+                                        <i class='fad fa-circle orCaseStatusIconDraft'></i>{{ _('Draft') }}
+                                    </li>
+                                    <li value='{{ _('Active') }}'>
+                                        <i class='fad fa-play orCaseStatusIconPlay'></i>{{ _('Active') }}
+                                    </li>
+                                    <li value='{{ _('On hold') }}'>
+                                        <i class='fad fa-pause orCaseStatusIconOnHold'></i>{{ _('On hold') }}
+                                    </li>
+                                    <li value='{{ _('Closed') }}'>
+                                        <i class='fad fa-stop orCaseStatusIconClosed'></i>{{ _('Closed') }}
+                                    </li>
+                                </ul>
+                            </div> <!-- /.orCard_group -->
+                        </div> <!-- /.orInput_wrapper -->
+                    </div> <!-- /.orCard_name -->
+                </div> <!-- /.form-group -->
+
+                <input id='caseHiddenInputGroup' name='group' hidden aria-label=''/>
+                <div class='form-group row'>
+                    <div class='orCardName row'>
+                        <label for='caseSelectGroup' class='orLabelTitle col-2 col-form-label'>
+                            <strong>{{ _('Group') }}</strong>:
+                        </label>
+                        <div class='orInputWrapper col-10'>
+                            <div class='orCardGroup orCardGroupGroup'>
+                                <div class='orCardInput orCardInputGroup'></div>
+                                <div class='orArrow'>
+                                    <i class='fad fa-caret-down'></i>
+                                </div> <!-- /.orArrow -->
+
+                                <ul class='orCardList orCardListGroup' id='caseGroupsList' aria-describedby='cardListGroupHelp'>
+                                </ul>
+                            </div> <!-- /.orCardGroup -->
+                        </div> <!-- /.orInputWrapper -->
+                    </div> <!-- /orCardName -->
+                </div> <!-- /.form-group -->
+
+                <div class='form-group row'>
+                    <label for='caseInputDueDate' class='col-2 col-form-label'>
+                        <strong>{{ _('Due date') }}</strong>
+                    </label>
+                    <div class='col-10'>
+                        <input type='datetime-local' id='caseInputDueDate' class='form-control' name='dueDate'
+                               aria-describedby='caseDueDateHelp' />
+                        <i class='fad fa-times orInputIconTimes' id='caseDueDateIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseDueDateIconCheck'></i>
+                        <small id='caseDueDateHelp'
+                               class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                            {{ _('Default Due Date, is 90 days from current date') }}
+                        </small>
+                    </div> <!-- /.col -->
+                </div> <!-- /.form-group -->
+
+                <div class='form-group row'>
+                    <a href='#' class='orAnchorAddClient btn btn-outline-dark' role='button'>
+                        <i class='fad fa-plus'></i>{{ _('Add Client Information') }}
+                    </a>
+                </div> <!-- /.form-group -->
+
+                <div class='orClientInformation'>
+                    <div class='form-group row'>
+                        <label for='caseInputClientName' class='col-2 col-form-label'>
+                            <strong>{{ _('Client Name') }}</strong>:
+                        </label>
+                        <div class='col-10'>
+                            <input type='text' id='caseInputClientName' name='clientName' class='form-control'
+                                   placeholder='Client Name' aria-describedby='caseClientNameHelp' />
+                            <i class='fad fa-times orInputIconTimes' id='caseClientNameIconTimes'></i>
+                            <i class='fad fa-check orInputIconCheck' id='caseClientNameIconCheck'></i>
+                            <small id='caseClientNameHelp'
+                                   class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                {{ _('Input a valid Client name') }}
+                            </small>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form_group -->
+
+                    <div class='form-group row'>
+                        <label for='caseInputClientId' class='col-2 col-form-label'>
+                            <strong>{{ _('Client ID') }}</strong>:
+                        </label>
+                        <div class='col-10'>
+                            <input type='text' id='caseInputClientId' class='form-control' name='clientId'
+                                   placeholder='Client ID' aria-describedby='caseClientIdHelp' />
+                            <i class='fad fa-times orInputIconTimes' id='caseClientIdIconTimes'></i>
+                            <i class='fad fa-check orInputIconCheck' id='caseClientIdIconCheck'></i>
+                            <small id='caseClientIdHelp'
+                                   class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                {{ _('Input a valid Client ID') }}
+                            </small>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form_group -->
+
+                    <div class='form-group row'>
+                        <label for='caseInputClientDescription' class='col-2 col-form-label'>
+                            <strong>{{ _('Client Details') }}</strong>:
+                        </label>
+                        <div class='col-10'>
+                            <textarea id='caseInputClientDescription' class='form-control' name='clientDescription'
+                                      placeholder='Client Details' aria-describedby='caseClientDescriptionHelp'></textarea>
+                            <i class='fad fa-times orInputIconTimes' id='caseClientDescriptionIconTimes'></i>
+                            <i class='fad fa-check orInputIconCheck' id='caseClientDescriptionIconCheck'></i>
+                            <small id='caseClientDescriptionHelp'
+                                   class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                {{ _('Input valid Client description') }}
+                            </small>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form_group -->
+                </div> <!-- /.orClientInformation -->
+
+                <div class='text-center orButtonsSubmitCancel'>
+                    <button id='buttonValidateCreateCase' type='button' name='validate' value='submit'
+                            class='btn btn-success'>
+                        <i class='fad fa-check'></i>{{ _('Submit') }}
+                    </button>
+                    <button id='buttonSubmitCreateCase' type='submit' name='submit' value='submit'
+                            class='btn btn-success' hidden>{{ _('Submit') }}
+                    </button>
+                    <button id='buttonCancelCreateCase' type='button' value='cancel'
+                            class='btn btn-danger orCancelBtn'>
+                        <i class='fad fa-times'></i>{{ _('Cancel') }}
+                    </button>
+                </div> <!-- /.text-center -->
+            </form>
+        </div> <!-- /#dialog_create_new_case -->
+
+        <!--
+        let $_dialog_edit_case = $('#dialog_edit_case');
+        let $_edit_case = $('#edit_case');
+        let $_form_edit_case = $('#form_edit_case');
+        -->
+        <!--
+        ----------------------- Dialog - Edit Case -----------------------
+        -->
+        <div id='dialogEditCase' title='Edit Case' class='orEmergentDialog'>
+            <!--<div id='form_alert' class='alert alert-dark'>
+                { _('All fields marked with') }} <span class='required_field'>*</span> { _('are required') }}
+            </div> !-- /#form_alert -->
+
+            <form id='formEditCase' action='' method='post'>
+                <div class='form-group row'>
+                    <label for='caseInputEditName' class='col-2 col-form-label'>
+                        <span class='orRequiredField'>*</span><strong>{{ _('Name') }}</strong>:
+                    </label>
+                    <div class='col-10'>
+                        <input id='caseInputEditName' name='name' type='text' class='form-control'
+                               placeholder='{{ _('Case Name') }}' aria-describedby='caseNameEditHelp'/>
+                        <i class='fad fa-times orInputIconTimes' id='caseNameEditIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseNameEditIconCheck'></i>
+                        <small id='caseNameEditHelp'
+                               class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                            {{ _('Input a valid Case name') }}
+                        </small>
+                    </div> <!-- /.col -->
+                </div> <!-- /.form-group -->
+
+                <div class='form-group row'>
+                    <label for='caseInputEditId' class='col-2 col-form-label'>
+                        <span class='orRequiredField'>*</span><strong>ID</strong>:
+                    </label>
+                    <div class='col-10'>
+                        <input id='caseInputEditId' name='id' type='text' class='form-control'
+                               placeholder='{{ _('Case ID') }}' aria-describedby='caseIdEditHelp' />
+                        <i class='fad fa-times orInputIconTimes' id='caseIdEditIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseIdEditIconCheck'></i>
+                        <small id='caseIdEditHelp'
+                               class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                            {{ _('Input a valid Case ID') }}
+                        </small>
+                    </div> <!-- /.col -->
+                </div> <!-- /.form-group -->
+
+                <div class='form-group row'>
+                    <label for='caseTextareaEditDescription' class='col-2 col-form-label'>
+                        <span class='requiredField'>*</span><strong>{{ _('Description') }}</strong>:
+                    </label>
+                    <div class='col-10'>
+                        <textarea id='caseTextareaEditDescription' name='description' class='form-control'
+                                  rows='4' placeholder='Case Description'
+                                  aria-describedby='caseDescriptionHelp'></textarea>
+                        <i class='fad fa-times orInputIconTimes' id='caseDescriptionEditIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseDescriptionEditIconCheck'></i>
+                        <small id='caseDescriptionEditHelp'
+                               class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                            {{ _('Input a valid Case Description') }}
+                        </small>
+                    </div> <!-- /.col -->
+                </div> <!-- /.form-group -->
+
+                <input id='caseHiddenEditInputType' name='type' hidden aria-label=''/>
+                <div class='form-group row'>
+                    <div class='orCardName row'>
+                        <label for='caseSelectEditType' class='orLabelTitle col-2 col-form-label'>
+                            <strong>{{ _('Type') }}</strong>:
+                        </label>
+                        <div class='orInputWrapper col-10'>
+                            <div class='orCardGroup orCardGroupType'>
+                                <div class='orCardInput orCardInputType'></div>
+                                <div class='orArrow'>
+                                    <i class='fad fa-caret-down'></i>
+                                </div> <!-- /.orArrow -->
+
+                                <ul class='orCardList orCardListType' aria-describedby='cardListTypeHelp'>
+                                    <li value='{{ _('Fraud') }}'><i class='fad fa-user-secret orCaseStatusIconFraud'></i>{{ _('Fraud') }} </li>
+                                    <li value='{{ _('ICAC') }}'><i class='fad fa-baby orCaseStatusIconIcac'></i>{{ _('ICAC') }} </li>
+                                    <li value='{{ _('Legal') }}'><i class='fad fa-balance-scale orCaseStatusIconLegal'></i>{{ _('Legal') }} </li>
+                                    <li value='{{ _('Security') }}'><i class='fad fa-user-shield orCaseStatusIconSecurity'></i>{{ _('Security') }} </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- /.form-group -->
+
+                <input id='caseHiddenInputStatus' name='status' hidden aria-label=''/>
+                <div class='form-group row'>
+                    <div class='orCardName row'>
+                        <label for='caseSelectStatus' class='orLabelTitle col-2 col-form-label'>
+                            <strong>{{ _('Status') }}</strong>:
+                        </label>
+                        <div class='orInputWrapper col-10'>
+                            <div class='orCardGroup orCardGroupStatus'>
+                                <div class='orCardInput orCardInputStatus'></div>
+                                <div class='orArrow'>
+                                    <i class='fad fa-caret-down'></i>
+                                </div> <!-- /.orArrow -->
+
+                                <ul class='orCardList orCardListStatus'>
+                                    <li value='{{ _('Draft') }}'>
+                                        <i class='fad fa-circle orCaseStatusIconDraft'></i>{{ _('Draft') }}
+                                    </li>
+                                    <li value='{{ _('Active') }}'>
+                                        <i class='fad fa-play orCaseStatusIconPlay'></i>{{ _('Active') }}
+                                    </li>
+                                    <li value='{{ _('On hold') }}'>
+                                        <i class='fad fa-pause orCaseStatusIconOnHold'></i>{{ _('On hold') }}
+                                    </li>
+                                    <li value='{{ _('Closed') }}'>
+                                        <i class='fad fa-stop orCaseStatusIconClosed'></i>{{ _('Closed') }}
+                                    </li>
+                                </ul>
+                            </div> <!-- /.orCard_group -->
+                        </div> <!-- /.orInput_wrapper -->
+                    </div> <!-- /.orCard_name -->
+                </div> <!-- /.form-group -->
+
+                <div class='form-group row'>
+                    <label for='caseInputEditDueDate' class='col-2 col-form-label'>
+                        <strong>{{ _('Due date') }}</strong>
+                    </label>
+                    <div class='col-10'>
+                        <input type='datetime-local' id='caseInputEditDueDate' class='form-control'
+                               name='dueDate' aria-describedby='caseEditDueDateHelp' />
+                        <i class='fad fa-times orInputIconTimes' id='caseDueDateIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseDueDateIconCheck'></i>
+                        <small id='caseEditDueDateHelp'
+                               class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                            {{ _('Default Due Date, is 90 days from current date') }}
+                        </small>
+                    </div> <!-- /.col -->
+                </div> <!-- /.form-group -->
+
+                <div class='text-center orButtonsSubmitCancel'>
+                    <button id='buttonValidateEditCase' type='button' name='validate' value='submit'
+                            class='btn btn-success'>
+                        <i class='fad fa-check'></i>{{ _('Submit') }}
+                    </button>
+                    <button id='buttonSubmitEditCase' type='submit' name='submit' value='submit'
+                            class='btn btn-success' hidden>{{ _('Submit') }}
+                    </button>
+                    <button id='buttonCancelEditCase' type='button' value='cancel'
+                            class='btn btn-danger cancel_btn'>
+                        <i class='fad fa-times'></i>{{ _('Cancel') }}
+                    </button>
+                </div> <!-- /.text-center -->
+            </form>
+        </div> <!-- /#dialog_edit_case -->
+    </div> <!-- /#eventPanel -->
 {% endblock %}

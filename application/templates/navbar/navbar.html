@@ -1,0 +1,247 @@
+<!-- slid-nav 1 -->
+<section id='nav1'>
+    <nav id='mainNav'>
+        <h2 class='orTitle'>
+            {{ _('OWL Menu') }}
+            <a href='#'>
+                <span class='ui-menu-icon float-right' id='menuBtn'>
+                    <i class='fad fa-bars' aria-hidden='true' id='changeMenuIcon'></i>
+                </span>
+            </a>
+        </h2>
+        <ul class='orUl' id='mainMenu'>
+            <li id='user'>
+                <a href='#'>
+                    <i class='fad fa-user-tie' aria-hidden='true'></i>
+                    {{ _('User') }}
+                    <i class='fad fa-chevron-left float-right '></i>
+                </a>
+            </li>
+            <li id='case'>
+                <a href='#'>
+                    <i class='fad fa-suitcase' aria-hidden='true'></i>
+                    {{ _('Case') }}
+                    <i class='fad fa-chevron-left float-right '></i>
+                </a>
+            </li>
+            <li id='reports'>
+                <a href='#'>
+                    <i class='fad fa-file-contract' aria-hidden='true'></i>
+                    {{ _('Reports') }}
+                    <i class='fad fa-chevron-left float-right '></i>
+                </a>
+            </li>
+            <li id='auditTrail'>
+                <a href='#'>
+                    <i class='fad fa-gavel' aria-hidden='true'></i>
+                    {{ _('Audit Trail') }}
+                    <i class='fad fa-chevron-left float-right '></i>
+                </a>
+            </li>
+            <li id='logout'>
+                <a href='{{ url_for("login_bp.logout") }}'>
+                    <i class='fad fa-sign-out' aria-hidden='true'></i>
+                    {{ _('Logout') }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+<!-- slid_nav 2 -->
+<section class='orNav2' id='nav2'>
+    <nav class='orMainNavLevel2' id='userSubNav'>
+        <h2 class='orTitle'>
+            {{ _('User') }}
+            <a href='#'>
+                <span class='orHomeIcon float-right' id='menuUser'>
+                    <i class='fad fa-user-tie' aria-hidden='true'></i>
+                </span>
+            </a>
+        </h2>
+        <ul class='orUl'>
+            <li class='orBack'>
+                <a href='#' class='btn orBackGradientButton'>
+                    <i class='fad fa-angle-double-left orBackLink' aria-hidden='true'></i>{{ _('Back') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-users-cog'></i>{{ _('Management') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-user-cog'></i>{{ _('Settings') }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+<!-- slid_nav 3 -->
+<section class='orNav3' id='nav3'>
+    <nav class='orMainNavLevel2' id='caseSubNav'>
+        <h2 class='orTitle'>
+            {{ _('Case') }}
+            <a href='#'>
+                <span class='orHomeIcon float-right' id='menuCase'>
+                    <i class='fad fa-suitcase' aria-hidden='true'></i>
+                </span>
+            </a>
+        </h2>
+        <ul class='orUl' id='mainMenuCase'>
+            <li class='orBack'>
+                <a href='#' class='btn orBackGradientButton'>
+                    <i class='fad fa-angle-double-left orBackLink' aria-hidden='true'></i>{{ _('Back') }}
+                </a>
+            </li>
+            <li id='entities'>
+                <a href='#'>
+                    <i class='fad fa-chart-network' aria-hidden='true'></i>
+                    {{ _('Entities') }}
+                    <i class='fad fa-chevron-left float-right '></i>
+                </a>
+            </li>
+            <li id='collectedData'>
+                <a href='#'>
+                    <i class='fad fa-database'></i>{{ _('Collected Data') }}
+                    <i class='fad fa-chevron-left float-right '></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+<!-- slid_nav 4 -->
+<section class='orNav4' id='nav4'>
+    <nav class='orMainNavLevel2' id='reportsSubNav'>
+        <h2 class='orTitle'>
+            {{ _('Reports') }}
+            <a href='#'>
+                <span class='orHomeIcon float-right' id='menuReports'>
+                    <i class='fad fa-file-contract' aria-hidden='true'></i>
+                </span>
+            </a>
+        </h2>
+        <ul class='orUl'>
+            <li class='orBack'>
+                <a href='#' class='btn orBackGradientButton'>
+                    <i class='fad fa-angle-double-left orBackLink' aria-hidden='true'></i>{{ _('Back') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-file-user'></i>{{ _('User') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-file-invoice'></i>{{ _('Case') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-file-code'></i>{{ _('System') }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+<!-- slid_nav 5 -->
+<section class='orNav5' id='nav5'>
+    <nav class='orMainNavLevel2' id='auditTrailSubNav'>
+        <h2 class='orTitle'>
+            {{ _('Audit Trail') }}
+            <a href='#'>
+                <span class='home_icon float-right' id='menuAuditTrail'>
+                    <i class='fad fa-gavel' aria-hidden='true'></i>
+                </span>
+            </a>
+        </h2>
+        <ul class='orUl'>
+            <li class='orBack'>
+                <a href='#' class='btn orBackGradientButton'>
+                    <i class='fad fa-angle-double-left orBackLink' aria-hidden='true'></i>{{ _('Back') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-chalkboard-teacher'></i>{{ _('User Events') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-users-class'></i>{{ _('All Users') }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+<!-- slid_nav 6 -->
+<section class='orNav6' id='nav6'>
+    <nav class='orMainNavLevel3' id='caseEntitiesNav'>
+        <h2 class='orTitle'>
+            {{ _('Entities') }}
+            <a href='#'>
+                <span class='orHomeIcon float-right' id='menuCaseEntities'>
+                    <i class='fad fa-chart-network' aria-hidden='true'></i>
+                </span>
+            </a>
+        </h2>
+        <ul class='orUl'>
+            <li class='orBackLevel'>
+                <a href='#' class='btn orBackGradientButton'>
+                    <i class='fad fa-angle-double-left orBackLink' aria-hidden='true'></i>{{ _('Back') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-calendar-alt'></i>{{ _('Events') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-map-marked-alt'></i>{{ _('Locations') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-object-ungroup'></i>{{ _('Objects') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-users'></i>{{ _('Persons') }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+<!-- slid_nav 7 -->
+<section class='orNav7' id='nav7'>
+    <nav class='orMainNavLevel3' id='caseCollectedDataNav'>
+        <h2 class='orTitle'>
+            {{ _('Collected Data') }}
+            <a href='#'>
+                <span class='orHomeIcon float-right' id='menuCaseCollectedData'>
+                    <i class='fad fa-database' aria-hidden='true'></i>
+                </span>
+            </a>
+        </h2>
+        <ul class='orUl'>
+            <li class='orBackLevel'>
+                <a href='#' class='btn orBackGradientButton'>
+                    <i class='fad fa-angle-double-left orBackLink' aria-hidden='true'></i>{{ _('Back') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-photo-video'></i>{{ _('Media') }}
+                </a>
+            </li>
+            <li>
+                <a href='#'>
+                    <i class='fad fa-images'></i>{{ _('Images') }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
