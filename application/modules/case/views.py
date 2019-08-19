@@ -19,15 +19,15 @@ case_bp = Blueprint('case_bp', __name__)
 
 
 # --------------------------------------- cases
-@case_bp.route('/case/<case_name>')
+@case_bp.route('/case/<caseName>')
 @login_required
-def case_environment (case_name: str):
+def case_environment(caseName: str):
     # Create case environment
-    print('------------------- case_bp.route(/case/{})'.format(case_name))
+    print('------------------- case_bp.route(/case/{})'.format(caseName))
     logger = init_logger(__name__, testing_mode=False)
     logger.info('Current User: {}\n'
                 '\t\tCASE - <case_environment>: The case <{}> has been selected'
-                .format(current_user.username, case_name))
+                .format(current_user.username, caseName))
     return None
 
 
@@ -89,7 +89,7 @@ def allGroups():
 
 @case_bp.route('/cases/<username>')
 @login_required
-def cases_user (username: str):
+def cases_user(username: str):
     print('------------------ case_bp.route(/case/{})'.format(username))
     logger = init_logger(__name__, testing_mode=False)
     # if current_user_profile == 'user':
@@ -128,7 +128,7 @@ def cases_user (username: str):
 
 @case_bp.route('/cases/user/login')
 @login_required
-def cases_user_login ():
+def cases_user_login():
     print('------------------ case_bp.route(/cases/user/login)')
     current_user_username = current_user.username
     logger = init_logger(__name__, testing_mode=False)
@@ -142,10 +142,10 @@ def cases_user_login ():
                             username=current_user_username))
 
 
-@case_bp.route('/case/detail/<case_name>')
+@case_bp.route('/case/detail/<caseName>')
 @login_required
-def case_detail (case_name: str):
-    print('------------------- case_bp.route(/case/detail/{})'.format(case_name))
+def case_detail(caseName: str):
+    print('------------------- case_bp.route(/case/detail/{})'.format(caseName))
     # Show all case data, and allows to add information (objects + meta-data) to case
     return None
 
@@ -156,7 +156,7 @@ def create():
     # Case create
     print('----------------- case_bp.route(/case/create/) - {}'.format(request.method))
     logger = init_logger(__name__, testing_mode=False)
-    profile = session['profile']
+    # profile = session['profile']
     currentUserUsername = current_user.username
     # if request.method == 'POST':
     caseId = request.form.get('id')
@@ -209,42 +209,42 @@ def create():
                             username=currentUserUsername))
 
 
-@case_bp.route('/case/delete/<case_name>')
+@case_bp.route('/case/delete/<caseName>')
 @login_required
-def delete (case_name: str):
+def delete(caseName: str):
     # Case delete
     print('----------------- case_bp.route(/case/delete/)')
-    print('case_name: ', case_name)
+    print('caseName: ', caseName)
     logger = init_logger(__name__, testing_mode=False)
     profile = session['profile']
-    delete_case = CaseMethod.delete_case_by_case_name(case_name)
+    delete_case = CaseMethod.delete_case_by_caseName(caseName)
     if delete_case:
-        flash('The case <{}> has been deleted successfully'.format(case_name))
+        flash('The case <{}> has been deleted successfully'.format(caseName))
         logger.info('Current User: {}\n'
                     '\t\tCASE - <delete>: case \'{}\' has been deleted successfully'
-                    .format(current_user.username, case_name))
+                    .format(current_user.username, caseName))
     else:
-        flash('The case <{}> could not be deleted'.format(case_name))
+        flash('The case <{}> could not be deleted'.format(caseName))
         logger.warning('Current User: {}\n'
                        '\t\tCASE - <delete>: case \'{}\' could not be deleted'
-                       .format(current_user.username, case_name))
+                       .format(current_user.username, caseName))
     return redirect(url_for('case_bp.cases',
                             profile=profile))
 
 
-@case_bp.route('/case/read/<case_name>')
+@case_bp.route('/case/read/<caseName>')
 @login_required
-def read (case_name: str):
+def read(caseName: str):
     # Case read
     print('----------------- case_bp.route(/case/read/)')
-    print('case_name: ', case_name)
+    print('caseName: ', caseName)
     logger = init_logger(__name__, testing_mode=False)
     profile = session['profile']
-    case_data = CaseMethod.get_case_by_case_name(case_name)
+    case_data = CaseMethod.get_case_by_caseName(caseName)
     groups = CaseMethod.get_all_groups_name()
     if case_data:
         logger.info('Current User: {}\n'
-                    '\t\tCASE - <read>: case_data loaded successfully - case_name: {}'
+                    '\t\tCASE - <read>: case_data loaded successfully - caseName: {}'
                     .format(current_user.username, case_data['name']))
     else:
         logger.warning('Current User: {}\n'
@@ -266,21 +266,21 @@ def read (case_name: str):
                            profile=profile)
 
 
-@case_bp.route('/case/update/<case_name>', methods=['GET', 'POST'])
+@case_bp.route('/case/update/<caseName>', methods=['GET', 'POST'])
 @login_required
-def update (case_name: str):
+def update(caseName: str):
     # Case update
     print('----------------- case_bp.route(/case/update/) - {}'.format(request.method))
-    print('case_name: ', case_name)
+    print('caseName: ', caseName)
     logger = init_logger(__name__, testing_mode=False)
     profile = session['profile']
     if request.method == 'GET':
-        case_data = CaseMethod.get_case_by_case_name(case_name)
+        case_data = CaseMethod.get_case_by_caseName(caseName)
         print('case_data: ', case_data)
         if case_data:
-            print('CASE - <update - GET>: case_data loaded successfully - case_name: {}'.format(case_data['name']))
+            print('CASE - <update - GET>: case_data loaded successfully - caseName: {}'.format(case_data['name']))
             logger.info('Current User: {}\n'
-                        '\t\tCASE - <update - GET>: case_data loaded successfully - case_name: {}'
+                        '\t\tCASE - <update - GET>: case_data loaded successfully - caseName: {}'
                         .format(current_user.username, case_data['name']))
         else:
             logger.error('Current User: {}\n'
@@ -312,8 +312,8 @@ def update (case_name: str):
             'groups': groups
         }
         print('case_data: ', case_data)
-        print('case_name: ', case_name)
-        if CaseMethod.update_case_data(case_name, case_data):
+        print('caseName: ', caseName)
+        if CaseMethod.update_case_data(caseName, case_data):
             logger.info('Current User: {}\n'
                         '\t\tCASE - <update - POST>: Case \'{}\' updated successfully'
                         .format(current_user.username, case_data['name']))

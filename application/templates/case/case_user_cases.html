@@ -351,9 +351,9 @@
         ----------------------- Dialog - Edit Case -----------------------
         -->
         <div id='dialogEditCase' title='Edit Case' class='orEmergentDialog'>
-            <!--<div id='form_alert' class='alert alert-dark'>
-                { _('All fields marked with') }} <span class='required_field'>*</span> { _('are required') }}
-            </div> !-- /#form_alert -->
+            <div id='form_alert' class='alert alert-dark'>
+                {{ _('All fields marked with') }} <span class='required_field'>*</span> {{ _('are required') }}
+            </div> <!-- /#form_alert -->
 
             <form id='formEditCase' action='' method='post'>
                 <div class='form-group row'>
@@ -405,20 +405,20 @@
                     </div> <!-- /.col -->
                 </div> <!-- /.form-group -->
 
-                <input id='caseHiddenEditInputType' name='type' hidden aria-label=''/>
+                <input id='caseHiddenInputEditType' name='type' hidden aria-label=''/>
                 <div class='form-group row'>
                     <div class='orCardName row'>
                         <label for='caseSelectEditType' class='orLabelTitle col-2 col-form-label'>
                             <strong>{{ _('Type') }}</strong>:
                         </label>
                         <div class='orInputWrapper col-10'>
-                            <div class='orCardGroup orCardGroupType'>
-                                <div class='orCardInput orCardInputType'></div>
+                            <div class='orCardGroup orCardGroupEditType'>
+                                <div class='orCardInput orCardInputEditType'></div>
                                 <div class='orArrow'>
                                     <i class='fad fa-caret-down'></i>
                                 </div> <!-- /.orArrow -->
 
-                                <ul class='orCardList orCardListType' aria-describedby='cardListTypeHelp'>
+                                <ul class='orCardList orCardListEditType' aria-describedby='cardListTypeHelp'>
                                     <li value='{{ _('Fraud') }}'><i class='fad fa-user-secret orCaseStatusIconFraud'></i>{{ _('Fraud') }} </li>
                                     <li value='{{ _('ICAC') }}'><i class='fad fa-baby orCaseStatusIconIcac'></i>{{ _('ICAC') }} </li>
                                     <li value='{{ _('Legal') }}'><i class='fad fa-balance-scale orCaseStatusIconLegal'></i>{{ _('Legal') }} </li>
@@ -429,20 +429,20 @@
                     </div>
                 </div> <!-- /.form-group -->
 
-                <input id='caseHiddenInputStatus' name='status' hidden aria-label=''/>
+                <input id='caseHiddenInputEditStatus' name='status' hidden aria-label=''/>
                 <div class='form-group row'>
                     <div class='orCardName row'>
                         <label for='caseSelectStatus' class='orLabelTitle col-2 col-form-label'>
                             <strong>{{ _('Status') }}</strong>:
                         </label>
                         <div class='orInputWrapper col-10'>
-                            <div class='orCardGroup orCardGroupStatus'>
-                                <div class='orCardInput orCardInputStatus'></div>
+                            <div class='orCardGroup orCardGroupEditStatus'>
+                                <div class='orCardInput orCardInputEditStatus'></div>
                                 <div class='orArrow'>
                                     <i class='fad fa-caret-down'></i>
                                 </div> <!-- /.orArrow -->
 
-                                <ul class='orCardList orCardListStatus'>
+                                <ul class='orCardList orCardListEditStatus'>
                                     <li value='{{ _('Draft') }}'>
                                         <i class='fad fa-circle orCaseStatusIconDraft'></i>{{ _('Draft') }}
                                     </li>
@@ -459,6 +459,26 @@
                             </div> <!-- /.orCard_group -->
                         </div> <!-- /.orInput_wrapper -->
                     </div> <!-- /.orCard_name -->
+                </div> <!-- /.form-group -->
+
+                <input id='caseHiddenInputEditGroup' name='group' hidden aria-label=''/>
+                <div class='form-group row'>
+                    <div class='orCardName row'>
+                        <label for='caseSelectGroup' class='orLabelTitle col-2 col-form-label'>
+                            <strong>{{ _('Group') }}</strong>:
+                        </label>
+                        <div class='orInputWrapper col-10'>
+                            <div class='orCardGroup orCardGroupEditGroup'>
+                                <div class='orCardInput orCardInputEditGroup'></div>
+                                <div class='orArrow'>
+                                    <i class='fad fa-caret-down'></i>
+                                </div> <!-- /.orArrow -->
+
+                                <ul class='orCardList orCardListEditGroup' id='caseGroupsEditList' aria-describedby='cardListGroupEditHelp'>
+                                </ul>
+                            </div> <!-- /.orCardGroup -->
+                        </div> <!-- /.orInputWrapper -->
+                    </div> <!-- /orCardName -->
                 </div> <!-- /.form-group -->
 
                 <div class='form-group row'>
