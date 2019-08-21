@@ -240,7 +240,7 @@ def read(caseName: str):
     print('caseName: ', caseName)
     logger = init_logger(__name__, testing_mode=False)
     profile = session['profile']
-    case_data = CaseMethod.get_case_by_caseName(caseName)
+    case_data = CaseMethod.get_case_by_case_name(caseName)
     groups = CaseMethod.get_all_groups_name()
     if case_data:
         logger.info('Current User: {}\n'
@@ -260,10 +260,11 @@ def read(caseName: str):
                        .format(current_user.username))
     print('case_data: ', case_data)
     print('groups: ', groups)
-    return render_template('case/case_read.html',
-                           case=case_data,
-                           groups=groups,
-                           profile=profile)
+    return case_data
+    # return render_template('case/case_read.html',
+    #                        case=case_data,
+    #                        groups=groups,
+    #                        profile=profile)
 
 
 @case_bp.route('/case/update/<caseName>', methods=['GET', 'POST'])
