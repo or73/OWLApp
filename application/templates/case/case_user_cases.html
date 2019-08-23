@@ -50,11 +50,11 @@
                         <th scope='col'>{{ _('GROUP') }}</th>
                         <th scope='col'>{{ _('CASE NAME') }}</th>
                         <th scope='col'>{{ _('CASE TYPE') }}</th>
-                        <th scope='col'>{{ _('CLIENT NAME') }}</th>
+                        <!--<th scope='col'>{ _('CLIENT NAME') }}</th>-->
                         <th scope='col'>{{ _('CASE ID') }}</th>
                         <th scope='col'>{{ _('DUE DATE') }}</th>
-                        <th scope='col'>{{ _('CREATED') }}</th>
-                        <th scope='col'>{{ _('LAST UPDATED') }}</th>
+                        <!--<th scope='col'>{ _('CREATED') }}</th>-->
+                        <!--<th scope='col'>{ _('LAST UPDATED') }}</th>-->
                         <th scope='col'>{{ _('STATUS') }}</th>
                         <th scope='col'></th>
                     </tr>
@@ -62,7 +62,7 @@
                 <tbody>
                     {% for name, case in cases.items() %}
                         <tr>
-                            <td>
+                            <td class='align-top orSelectCase'>
                                 <input type='checkbox' id='{{ name }}' name='selectedCase' value='{{ name }}'  />
                                 <label for='{{ name }}'></label>
                             </td>
@@ -81,11 +81,11 @@
                             </td>
                             <td><a href='#' class='orName'><strong>{{ case.name }}</strong></a> </td>
                             <td>{{ case.type }}</td>
-                            <td>{{ case.client_name }}</td>
+                            <!--<td>{ case.client_name }}</td>-->
                             <td>{{ case.case_id }}</td>
                             <td>{{ case.due_date }}</td>
-                            <td>{{ case.creation_date }}</td>
-                            <td>{{ case.last_update }}</td>
+                            <!--<td>{ case.creation_date }}</td>-->
+                            <!--<td>{ case.last_update }}</td>-->
                             <td>
                                 <span class='orCaseStatusIcon orNormalFont'>
                                     {% if case.status == 'Active' %}
@@ -108,9 +108,15 @@
                                     </a>
 
                                     <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
-                                        <a class='dropdown-item orEditCase' id='{{ case.name }}' href='#'>{{ _('Edit case') }}</a>
-                                        <a class='dropdown-item' href='#'>{{ _('Export case') }}</a>
-                                        <a class='dropdown-item orDeleteItemMenu' href='#'>{{ _('Delete case') }}</a>
+                                        <a class='dropdown-item orEditCase' data-name='{{ case.name }}' href='#'>
+                                            <i class='fad fa-file-edit orCaseMenuEdit'></i> {{ _('Edit case') }}
+                                        </a>
+                                        <a class='dropdown-item orExportCase' data-name='{{ case.name }}' href='#'>
+                                            <i class='fad fa-file-export  orCaseMenuExport'></i> {{ _('Export case') }}
+                                        </a>
+                                        <a class='dropdown-item orDeleteCase' data-name='{{ case.name }}' href='#'>
+                                            <i class='fad fa-trash orCaseMenuDelete'></i> {{ _('Delete case') }}
+                                        </a>
                                     </div> <!-- /.dropdown-menu -->
                                 </div> <!-- /.dropdown -->
                             </td>
@@ -123,7 +129,7 @@
         <!--
             ----------------------- Dialog - Create New Case -----------------------
         -->
-        <div id='dialogCreateNewCase' title='Create New Case' class='orEmergentDialog'>
+        <div id='dialogCreateNewCase' title='Create New Case' class='orEmergentDialog orEmergentDialogWarning'>
             <div id='formAlert' class='alert alert-dark'>
                 {{ _('All fields marked with') }} <span class='orRequiredField'>*</span> {{ _('are required') }}
             </div> <!-- /#form_alert -->
@@ -374,30 +380,30 @@
                     </button>
                 </div> <!-- /.text-center -->
             </form>
-        </div> <!-- /#dialog_create_new_case -->
+        </div> <!-- /#dialogCreateNewCase -->
 
         <!--
         ----------------------- Dialog - Edit Case -----------------------
         -->
-        <div id='dialogEditCase' title='Edit Case' class='orEmergentDialog'>
+        <div id='dialogEditCase' title='Edit Case' class='orEmergentDialog orEmergentDialogWarning'>
             <div id='form_alert' class='alert alert-dark'>
                 {{ _('All fields marked with') }} <span class='required_field'>*</span> {{ _('are required') }}
             </div> <!-- /#form_alert -->
 
-            <form id='formEditCase' action='' method='post'>
+            <form id='formEditCase' action=''  method='post'>
                 <!---
                         Case - Edit Name
                 --->
                 <div class='form-group row'>
-                    <label for='caseInputEditName' class='col-2 col-form-label'>
+                    <label for='caseEditInputName' class='col-2 col-form-label'>
                         <span class='orRequiredField'>*</span><strong>{{ _('Name') }}</strong>:
                     </label>
                     <div class='col-10'>
-                        <input id='caseInputEditName' name='name' type='text' class='form-control'
+                        <input id='caseEditInputName' name='name' type='text' class='form-control'
                                placeholder='{{ _('Case Name') }}' aria-describedby='caseNameEditHelp'/>
-                        <i class='fad fa-times orInputIconTimes' id='caseNameEditIconTimes'></i>
-                        <i class='fad fa-check orInputIconCheck' id='caseNameEditIconCheck'></i>
-                        <small id='caseNameEditHelp'
+                        <i class='fad fa-times orInputIconTimes' id='caseEditNameIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseEditNameIconCheck'></i>
+                        <small id='caseEditNameHelp'
                                class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
                             {{ _('Input a valid Case name') }}
                         </small>
@@ -408,15 +414,15 @@
                         Case - Edit ID
                 --->
                 <div class='form-group row'>
-                    <label for='caseInputEditId' class='col-2 col-form-label'>
+                    <label for='caseEditInputId' class='col-2 col-form-label'>
                         <span class='orRequiredField'>*</span><strong>ID</strong>:
                     </label>
                     <div class='col-10'>
-                        <input id='caseInputEditId' name='id' type='text' class='form-control'
+                        <input id='caseEditInputId' name='id' type='text' class='form-control'
                                placeholder='{{ _('Case ID') }}' aria-describedby='caseIdEditHelp' />
-                        <i class='fad fa-times orInputIconTimes' id='caseIdEditIconTimes'></i>
-                        <i class='fad fa-check orInputIconCheck' id='caseIdEditIconCheck'></i>
-                        <small id='caseIdEditHelp'
+                        <i class='fad fa-times orInputIconTimes' id='caseEditIdIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseEditIdIconCheck'></i>
+                        <small id='caseEditIdHelp'
                                class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
                             {{ _('Input a valid Case ID') }}
                         </small>
@@ -427,16 +433,16 @@
                         Case - Edit Description
                 --->
                 <div class='form-group row'>
-                    <label for='caseTextareaEditDescription' class='col-2 col-form-label'>
+                    <label for='caseEditTextareaDescription' class='col-2 col-form-label'>
                         <span class='orRequiredField'>*</span><strong>{{ _('Description') }}</strong>:
                     </label>
                     <div class='col-10'>
-                        <textarea id='caseTextareaEditDescription' name='description' class='form-control'
+                        <textarea id='caseEditTextareaDescription' name='description' class='form-control'
                                   rows='4' placeholder='Case Description'
                                   aria-describedby='caseDescriptionHelp'></textarea>
-                        <i class='fad fa-times orInputIconTimes' id='caseDescriptionEditIconTimes'></i>
-                        <i class='fad fa-check orInputIconCheck' id='caseDescriptionEditIconCheck'></i>
-                        <small id='caseDescriptionEditHelp'
+                        <i class='fad fa-times orInputIconTimes' id='caseEditDescriptionIconTimes'></i>
+                        <i class='fad fa-check orInputIconCheck' id='caseEditDescriptionIconCheck'></i>
+                        <small id='caseEditDescriptionHelp'
                                class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
                             {{ _('Input a valid Case Description') }}
                         </small>
@@ -533,10 +539,10 @@
                             <strong>{{ _('Due Date') }}</strong>:
                         </legend>
                         <div class='col-10'>
-                            <input type='datetime-local' id='caseInputEditDueDate' class='form-control'
+                            <input type='datetime-local' id='caseEditInputDueDate' class='form-control'
                                    name='dueDate' aria-describedby='caseEditDueDateHelp' aria-label='' />
-                            <i class='fad fa-times orInputIconTimes' id='caseDueDateIconTimes'></i>
-                            <i class='fad fa-check orInputIconCheck' id='caseDueDateIconCheck'></i>
+                            <i class='fad fa-times orInputIconTimes' id='caseEditDueDateIconTimes'></i>
+                            <i class='fad fa-check orInputIconCheck' id='caseEditDueDateIconCheck'></i>
                             <small id='caseEditDueDateHelp'
                                    class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
                                 {{ _('Default Due Date, is 90 days from current date') }}
@@ -562,6 +568,30 @@
                     </button>
                 </div> <!-- /.text-center -->
             </form>
-        </div> <!-- /#dialog_edit_case -->
+        </div> <!-- /#dialogEditCase -->
+
+        <!--
+        ----------------------- Dialog - Delete Case -----------------------
+        -->
+        <div id='dialogDeleteCase' title='Delete Case' class='orEmergentDialog orEmergentDialogDanger'>
+            <div class='text-center orButtonsSubmitCancel'>
+                <form id='formDeleteCase' action='' method='post'>
+                    <input id='inputCaseToDelete' hidden aria-label=''/>
+                    <h2>{{ _('Deleting Case') }}</h2>
+                    <h3>Are you sure, you want to delete the case <span class='orClassToDelete' id='classToDelete'></span></h3>
+
+                    <button id='buttonValidateDeleteCase' type='button' name='validate' value='submit'
+                            class='btn btn-success'>
+                        <i class='fad fa-check'></i>{{ _('Delete') }}
+                    </button>
+                    <button id='buttonSubmitDeleteCase' type='submit' name='submit' value='submit'
+                            class='btn btn-success' hidden>{{ _('Submit') }}</button>
+                    <button id='buttonCancelDeleteCase' type='button' value='Cancel'
+                            class='btn btn-danger cancel_button'>
+                        <i class='fad fa-times'></i>{{ _('Cancel') }}
+                    </button>
+                </form>
+            </div> <!-- /.text-center -->
+        </div> <!-- /#dialogDeleteCase -->
     </div> <!-- /#eventPanel -->
 {% endblock %}

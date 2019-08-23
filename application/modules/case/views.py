@@ -7,13 +7,15 @@ Copyright (c) 2019. This Application has been developed by OR73.
 # GET: Show current user data
 # POST: Create new user
 # PUT: Update user data
-from flask import Blueprint, flash, redirect, request, render_template, session, url_for
+from flask import Blueprint, flash, redirect, request, render_template, Response, session, url_for
 from flask_login import current_user, login_required
 
 from .methods import CaseMethod
-from ..group import GroupMethod
 
 from application.modules import init_logger
+
+import io
+import xlsxwriter
 
 case_bp = Blueprint('case_bp', __name__)
 
@@ -86,6 +88,91 @@ def allGroups():
     print('groupsList: ', groupsList)
     return {'groupsList': groupsList}
 
+
+@case_bp.route('/case/file/<caseName>')
+@login_required
+def caseFile(caseName: str):
+    print('--------------------- caseFile </case/file/{}>'.format(caseName))
+    toReturn = CaseMethod.setClassToExcelFile(caseName)   # Create Excel File of provided Case name
+    print('answer received from server side 1... ', toReturn)
+    return toReturn
+    # currentCaseData = dict(CaseMethod.get_case_by_case_name(caseName))
+    # print('currentCaseData: ', currentCaseData)
+    # currentFileName = currentCaseData['name'] + '.xlsx'
+    # columnTitles = ['ID', 'Name', 'Description', 'Status', 'Type', 'Groups',
+    #                 'Target ID', 'Target Name',
+    #                 'Creation Date', 'Due Date', 'Last Modification']
+    # colAWidth = len('Last Modification')
+    # colBWidth = 30
+    # colCWidth = len('format: yyyy-mm-dd HH:MM')
+    # print('currentFileName: ', currentFileName)
+    # output = io.BytesIO()
+    #
+    # workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+    # worksheet = workbook.add_worksheet(caseName)  # Add worksheet to workbook, with name contained in caseName
+    #
+    # bold = workbook.add_format({'bold': True})  # Add a bold format to use to highlight cells
+    # italic = workbook.add_format({'italic': True, 'font_color': 'gray'})  # Add a italic format to use in cells
+    # dateFormat = workbook.add_format({'num_format': 'yyyy-mm-dd HH:MM'})  # Add date format
+    # mergeFormatTitle = workbook.add_format({
+    #     'font_size': 16,
+    #     'font_color': 'black',
+    #     'bold': True,
+    #     'align': 'center',
+    #     'valign': 'center',
+    #     'fg_color': 'cyan'
+    # })
+    # mergeFormatSubTitle = workbook.add_format({
+    #     'font_size': 12,
+    #     'font_color': 'black',
+    #     'bold': True,
+    #     'align': 'center',
+    #     'valign': 'center',
+    #     'fg_color': 'silver'
+    # })
+    #
+    # row = 2
+    # col = 0
+    # counter = 0
+    # for key, val in currentCaseData.items():
+    #     if counter == 0:
+    #         worksheet.merge_range(0, 0, 0, 2, 'Case ' + caseName, mergeFormatTitle)
+    #         worksheet.merge_range(1, 0, 1, 2, 'Case Information', mergeFormatSubTitle)
+    #     if counter == 6:
+    #         worksheet.merge_range(8, 0, 8, 2, 'Target Information', mergeFormatSubTitle)
+    #         row += 1
+    #     if counter == 8:
+    #         worksheet.merge_range(11, 0, 11, 2, 'Case Dates', mergeFormatSubTitle)
+    #         row += 1
+    #
+    #     worksheet.write(row, col, columnTitles[counter], bold)
+    #     counter += 1
+    #     col_groups = 1
+    #     if key == 'groups':  # Extract cases groups
+    #         for group in val:
+    #             worksheet.write_string(row, col_groups, group)  # Write in worksheet
+    #             col_groups += 1
+    #     else:
+    #         if 'date' in key or 'last' in key:  # Change date format to string format
+    #             worksheet.write_datetime(row, col + 1,
+    #                                      val, dateFormat)  # Write in worksheet
+    #             worksheet.write_string(row, col + 2,
+    #                                    'format: yyyy-mm-dd HH:MM', italic)  # Write in worksheet
+    #         else:  # For all other fields
+    #             worksheet.write_string(row, col + 1, val)  # Write in worksheet
+    #     row += 1
+    # worksheet.set_column('A:A', colAWidth)
+    # worksheet.set_column('B:B', colBWidth)
+    # worksheet.set_column('C:C', colCWidth)
+    #
+    # workbook.close()  # Close workbook
+    # print('Workbook Close: ', workbook)
+    #
+    # output.seek(0)
+    # print('1.')
+    # print('output: ', output)
+    # return Response(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    
 
 @case_bp.route('/cases/<username>')
 @login_required
@@ -209,15 +296,15 @@ def create():
                             username=currentUserUsername))
 
 
-@case_bp.route('/case/delete/<caseName>')
+@case_bp.route('/case/delete/<caseName>', methods=['POST'])
 @login_required
 def delete(caseName: str):
     # Case delete
     print('----------------- case_bp.route(/case/delete/)')
     print('caseName: ', caseName)
     logger = init_logger(__name__, testing_mode=False)
-    profile = session['profile']
-    delete_case = CaseMethod.delete_case_by_caseName(caseName)
+    # profile = session['profile']
+    delete_case = CaseMethod.delete_case_by_case_name(caseName)
     if delete_case:
         flash('The case <{}> has been deleted successfully'.format(caseName))
         logger.info('Current User: {}\n'
@@ -228,8 +315,8 @@ def delete(caseName: str):
         logger.warning('Current User: {}\n'
                        '\t\tCASE - <delete>: case \'{}\' could not be deleted'
                        .format(current_user.username, caseName))
-    return redirect(url_for('case_bp.cases',
-                            profile=profile))
+    return redirect(url_for('case_bp.cases_user',
+                            username=current_user.username))
 
 
 @case_bp.route('/case/read/<caseName>')
@@ -239,7 +326,7 @@ def read(caseName: str):
     print('----------------- case_bp.route(/case/read/)')
     print('caseName: ', caseName)
     logger = init_logger(__name__, testing_mode=False)
-    profile = session['profile']
+    # profile = session['profile']
     case_data = CaseMethod.get_case_by_case_name(caseName)
     groups = CaseMethod.get_all_groups_name()
     if case_data:
@@ -274,9 +361,9 @@ def update(caseName: str):
     print('----------------- case_bp.route(/case/update/) - {}'.format(request.method))
     print('caseName: ', caseName)
     logger = init_logger(__name__, testing_mode=False)
-    profile = session['profile']
+    # profile = session['profile']
     if request.method == 'GET':
-        case_data = CaseMethod.get_case_by_caseName(caseName)
+        case_data = CaseMethod.get_case_by_case_name(caseName)
         print('case_data: ', case_data)
         if case_data:
             print('CASE - <update - GET>: case_data loaded successfully - caseName: {}'.format(case_data['name']))
@@ -306,11 +393,15 @@ def update(caseName: str):
         #                groups=all_groups,
         #                profile=profile)
     elif request.method == 'POST':
-        groups = request.form.getlist('current_case_groups')
+        # groups = request.form.getlist('current_case_groups')
         case_data = {
             'name': request.form.get('name'),
+            'case_id': request.form.get('id'),
             'description': request.form.get('description'),
-            'groups': groups
+            'groups': [request.form.get('group')],
+            'status': request.form.get('status'),
+            'type': request.form.get('type'),
+            'due_date': request.form.get('dueDate')
         }
         print('case_data: ', case_data)
         print('caseName: ', caseName)
@@ -322,5 +413,5 @@ def update(caseName: str):
             logger.warning('Current User: {}\n'
                            '\t\tCASE - <update - POST>: Case \'{}\' could not be updated'
                            .format(current_user.username, case_data['name']))
-    return redirect(url_for('case_bp.cases',
-                            profile=profile))
+    return redirect(url_for('case_bp.cases_user',
+                            username=current_user.username))

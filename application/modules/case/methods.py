@@ -6,6 +6,11 @@ Copyright (c) 2019. This Application has been developed by OR73.
 from typing import Union
 from application.setup import mongo
 from .models import Case
+from datetime import datetime
+from flask import Response
+
+import xlsxwriter
+import io
 
 
 class CaseMethod(Case):
@@ -26,7 +31,7 @@ class CaseMethod(Case):
             cases_collection.insert_one(new_case.serialize)
             return new_case.serialize
         return False
-
+    
     @staticmethod
     def delete_case_by_case_name(case_name: str) -> bool:
         print('---------------- delete_case_by_case_name {}'.format(case_name))
@@ -48,7 +53,7 @@ class CaseMethod(Case):
                 return False
         print('2. Case {} could not be deleted'.format(case_name))
         return False
-
+    
     @staticmethod
     def filter_groups(all_groups: list, case_groups: list) -> list:
         # Compare both lists and create a new list without case_group cases
@@ -58,14 +63,14 @@ class CaseMethod(Case):
                 case_groups_list.append(group['name'])
         print('case_group_list: ', case_groups_list)
         return case_groups_list
-
+    
     @staticmethod
     def get_all_cases() -> list:
         print('---------------- get_all_cases')
         # Return all cases from DB
         cases_collection = mongo.db.cases
         return list(cases_collection.find({}, {'_id': 0}))
-
+    
     @staticmethod
     def get_all_groups_name() -> list:
         # Return a list of all groups' names
@@ -73,19 +78,19 @@ class CaseMethod(Case):
         print('------------------ get_all_groups_name')
         groups_collection = mongo.db.groups
         return list(groups_collection.find({}, {'_id': 0, 'name': 1}))
-
+    
     @staticmethod
-    def get_case_by_case_name(case_name: str) -> Union[Case, bool]:
+    def get_case_by_case_name(case_name: str) -> Union[dict, bool]:
         # Return all case data by its case_name
         print('------------------- get_case_by_case_name: ', case_name)
         cases_collection = mongo.db.cases
-        case_by_name = cases_collection.find_one({'name': case_name})
+        case_by_name = cases_collection.find_one({'name': case_name}, {'_id': 0})
         if case_by_name:
             print('Case exists')
             return case_by_name
         print('Case does not exist')
         return False
-
+    
     @staticmethod
     def get_user_cases_and_groups_by_username(username: str) -> dict:
         # Return all cases associated with username
@@ -96,7 +101,7 @@ class CaseMethod(Case):
         print('user: ', user)
         user_groups_manager = []
         user_groups = []
-
+        
         # If user has user_groups_manager list, then assign user['user_groups_manager']
         if 'user_groups_manager' in user:
             user_groups_manager = user['user_groups_manager']
@@ -105,7 +110,7 @@ class CaseMethod(Case):
             user_groups = user['user_groups']
         print('user_groups_manager: ', user_groups_manager)
         print('user_groups: ', user_groups)
-
+        
         # Load all cases
         cases_collection = mongo.db.cases
         all_cases = cases_collection.find()
@@ -114,7 +119,7 @@ class CaseMethod(Case):
         else:
             print('Something wrong and cases could not be loaded')
             return {}
-
+        
         user_groups_dict = {}
         counter = 1
         # Search in all_cases
@@ -133,7 +138,7 @@ class CaseMethod(Case):
                         'due_date': (case['due_date']).strftime('%A, %d-%B-%Y %I:%M%p'),
                         'last_update': (case['last_modification']).strftime('%A, %d-%B-%Y %I:%M%p')}
             print('-*-*-*-*-*-*-*-*-*-* {}. new_case: '.format(counter, new_case))
-
+            
             if len(user_groups) == 0 and len(user_groups_manager) == 0:
                 new_case['groups'] = {}
                 user_groups_dict[case['name']] = new_case
@@ -160,24 +165,122 @@ class CaseMethod(Case):
                 print('1. user_groups_dict: {}'.format(user_groups_dict))
         print('2. user_groups_dict: {}'.format(user_groups_dict))
         return user_groups_dict
-
+    
     @staticmethod
     def update_case_data(case_name: str, case_data: dict) -> bool:
         # Update case data
-        print('------------------ update_case_data')
+        print('------------------ update_case_data\ncase_name: {}\ncase_data: {}'.format(case_name, case_data))
+        providedDate = case_data['due_date']
+        providedDate = providedDate + ':00'
+        newDate = datetime.strptime(providedDate, '%Y-%m-%dT%H:%M:%S')
         cases_collection = mongo.db.cases
         case_update = cases_collection.update({'name': case_name},
                                               {'$set': {'name': case_data['name'],
+                                                        'case_id': case_data['case_id'],
                                                         'description': case_data['description'],
-                                                        'groups': case_data['groups']}})
+                                                        'groups': case_data['groups'],
+                                                        'status': case_data['status'],
+                                                        'type': case_data['type'],
+                                                        'due_date': newDate
+                                                        }})
         if case_update:
             print('case_update: ', case_update)
             return True
         return False
-
+    
     @staticmethod
     def validate_case_exist(case_id):
         # Validate if a provided case_id exists or not in DB
         print('--------------------- validate_case_exist')
         cases_collection = mongo.db.cases
         return cases_collection.find({'case_id': case_id})
+    
+    @staticmethod
+    def setClassToExcelFile(caseName):
+        print('------------------ setClassToExcelFile - ', caseName)
+        currentCaseData = dict(CaseMethod.get_case_by_case_name(caseName))
+        print('currentCaseData: ', currentCaseData)
+        currentFileName = currentCaseData['name'] + '.xlsx'
+        columnTitles = ['ID', 'Name', 'Description', 'Status', 'Type', 'Groups',
+                        'Target ID', 'Target Name',
+                        'Creation Date', 'Due Date', 'Last Modification']
+        colAWidth = len('Last Modification')
+        colBWidth = 30
+        colCWidth = len('format: yyyy-mm-dd HH:MM')
+        print('currentFileName: ', currentFileName)
+        output = io.BytesIO()
+        
+        workbook = xlsxwriter.Workbook(output,
+                                       {
+                                           'in_memory': True,
+                                           'default_date_format': 'yyyy-mm-dd HH:MM',
+                                           'strings_to_numbers': True
+                                       })  # Create Workbook
+        worksheet = workbook.add_worksheet(caseName)  # Add worksheet to workbook, with name contained in caseName
+        
+        bold = workbook.add_format({'bold': True})  # Add a bold format to use to highlight cells
+        italic = workbook.add_format({'italic': True, 'font_color': 'gray'})  # Add a italic format to use in cells
+        dateFormat = workbook.add_format({'num_format': 'yyyy-mm-dd HH:MM'})  # Add date format
+        mergeFormatTitle = workbook.add_format({
+            'font_size': 16,
+            'font_color': 'black',
+            'bold': True,
+            'align': 'center',
+            'valign': 'center',
+            'fg_color': 'cyan'
+        })
+        mergeFormatSubTitle = workbook.add_format({
+            'font_size': 12,
+            'font_color': 'black',
+            'bold': True,
+            'align': 'center',
+            'valign': 'center',
+            'fg_color': 'silver'
+        })
+        
+        row = 0
+        col = 0
+        titleCounter = 0
+        for key, val in currentCaseData.items():
+            print('KEY: {}\t VAL: {}'.format(key, val))
+            if row == 0:
+                # Case Information Title
+                worksheet.merge_range(row, 0, 0, 2, 'Case ' + caseName, mergeFormatTitle)
+                worksheet.merge_range(row + 1, 0, row + 1, 2, 'Case Information', mergeFormatSubTitle)
+                row += 2
+            
+            if row == 8:
+                # Case Target Information Title
+                worksheet.merge_range(row, 0, row, 2, 'Target Information', mergeFormatSubTitle)
+                row += 1
+                
+            if row == 11:
+                # Case Dates Title
+                worksheet.merge_range(row, 0, row, 2, 'Case Dates', mergeFormatSubTitle)
+                row += 1
+            
+            worksheet.write_string(row, 0, columnTitles[titleCounter], bold)
+
+            if key == 'groups':
+                val = ''
+                groups = currentCaseData['groups']
+                for idx, group in enumerate(groups):
+                    if idx != 0 and idx < len(groups):
+                        val += ', '
+                    val += group
+            if 'date' in key or 'last' in key:
+                worksheet.write_datetime(row, 1, val)
+            else:
+                worksheet.write(row, 1, val)
+            titleCounter += 1
+            row += 1
+        worksheet.set_column('A:A', colAWidth)
+        worksheet.set_column('B:B', colBWidth)
+        worksheet.set_column('C:C', colCWidth)
+        
+        workbook.close()  # Close workbook
+        print('Workbook Close: ', workbook)
+        
+        output.seek(0)
+        
+        return Response(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
