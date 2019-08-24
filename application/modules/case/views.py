@@ -89,90 +89,19 @@ def allGroups():
     return {'groupsList': groupsList}
 
 
-@case_bp.route('/case/file/<caseName>')
+@case_bp.route('/case/file/', methods=['POST'])  # /<caseName>')
 @login_required
-def caseFile(caseName: str):
-    print('--------------------- caseFile </case/file/{}>'.format(caseName))
-    toReturn = CaseMethod.setClassToExcelFile(caseName)   # Create Excel File of provided Case name
+def caseFile():   # def caseFile(caseName: str):
+    # print('--------------------- caseFile </case/file/{}>'.format(caseName))
+    print('--------------------- caseFile </case/file>')
+    print('request.form: ', request.form)
+    casesList = request.get_json()
+    print('casesList: ', casesList)
+    # toReturn = CaseMethod.setClassToExcelFile(caseName)   # Create Excel File of provided Case name
+    toReturn = CaseMethod.setClassToExcelFile(casesList)
     print('answer received from server side 1... ', toReturn)
     return toReturn
-    # currentCaseData = dict(CaseMethod.get_case_by_case_name(caseName))
-    # print('currentCaseData: ', currentCaseData)
-    # currentFileName = currentCaseData['name'] + '.xlsx'
-    # columnTitles = ['ID', 'Name', 'Description', 'Status', 'Type', 'Groups',
-    #                 'Target ID', 'Target Name',
-    #                 'Creation Date', 'Due Date', 'Last Modification']
-    # colAWidth = len('Last Modification')
-    # colBWidth = 30
-    # colCWidth = len('format: yyyy-mm-dd HH:MM')
-    # print('currentFileName: ', currentFileName)
-    # output = io.BytesIO()
-    #
-    # workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-    # worksheet = workbook.add_worksheet(caseName)  # Add worksheet to workbook, with name contained in caseName
-    #
-    # bold = workbook.add_format({'bold': True})  # Add a bold format to use to highlight cells
-    # italic = workbook.add_format({'italic': True, 'font_color': 'gray'})  # Add a italic format to use in cells
-    # dateFormat = workbook.add_format({'num_format': 'yyyy-mm-dd HH:MM'})  # Add date format
-    # mergeFormatTitle = workbook.add_format({
-    #     'font_size': 16,
-    #     'font_color': 'black',
-    #     'bold': True,
-    #     'align': 'center',
-    #     'valign': 'center',
-    #     'fg_color': 'cyan'
-    # })
-    # mergeFormatSubTitle = workbook.add_format({
-    #     'font_size': 12,
-    #     'font_color': 'black',
-    #     'bold': True,
-    #     'align': 'center',
-    #     'valign': 'center',
-    #     'fg_color': 'silver'
-    # })
-    #
-    # row = 2
-    # col = 0
-    # counter = 0
-    # for key, val in currentCaseData.items():
-    #     if counter == 0:
-    #         worksheet.merge_range(0, 0, 0, 2, 'Case ' + caseName, mergeFormatTitle)
-    #         worksheet.merge_range(1, 0, 1, 2, 'Case Information', mergeFormatSubTitle)
-    #     if counter == 6:
-    #         worksheet.merge_range(8, 0, 8, 2, 'Target Information', mergeFormatSubTitle)
-    #         row += 1
-    #     if counter == 8:
-    #         worksheet.merge_range(11, 0, 11, 2, 'Case Dates', mergeFormatSubTitle)
-    #         row += 1
-    #
-    #     worksheet.write(row, col, columnTitles[counter], bold)
-    #     counter += 1
-    #     col_groups = 1
-    #     if key == 'groups':  # Extract cases groups
-    #         for group in val:
-    #             worksheet.write_string(row, col_groups, group)  # Write in worksheet
-    #             col_groups += 1
-    #     else:
-    #         if 'date' in key or 'last' in key:  # Change date format to string format
-    #             worksheet.write_datetime(row, col + 1,
-    #                                      val, dateFormat)  # Write in worksheet
-    #             worksheet.write_string(row, col + 2,
-    #                                    'format: yyyy-mm-dd HH:MM', italic)  # Write in worksheet
-    #         else:  # For all other fields
-    #             worksheet.write_string(row, col + 1, val)  # Write in worksheet
-    #     row += 1
-    # worksheet.set_column('A:A', colAWidth)
-    # worksheet.set_column('B:B', colBWidth)
-    # worksheet.set_column('C:C', colCWidth)
-    #
-    # workbook.close()  # Close workbook
-    # print('Workbook Close: ', workbook)
-    #
-    # output.seek(0)
-    # print('1.')
-    # print('output: ', output)
-    # return Response(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    
+
 
 @case_bp.route('/cases/<username>')
 @login_required

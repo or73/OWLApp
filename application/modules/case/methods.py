@@ -196,17 +196,21 @@ class CaseMethod(Case):
         return cases_collection.find({'case_id': case_id})
     
     @staticmethod
-    def setClassToExcelFile(caseName):
-        print('------------------ setClassToExcelFile - ', caseName)
-        currentCaseData = dict(CaseMethod.get_case_by_case_name(caseName))
-        print('currentCaseData: ', currentCaseData)
-        currentFileName = currentCaseData['name'] + '.xlsx'
+    def setClassToExcelFile(casesList):
+        print('------------------ setClassToExcelFile - ', casesList)
+        
+        print('type(casesList): ', type(casesList))
+        print('len(casesList): ', len(casesList))
+        currentFileName = casesList[0] + '.xlsx' if len(casesList) == 0 else 'selectedCases.xlsx'
+        # currentCaseData['name'] + '.xlsx'
+        
         columnTitles = ['ID', 'Name', 'Description', 'Status', 'Type', 'Groups',
                         'Target ID', 'Target Name',
                         'Creation Date', 'Due Date', 'Last Modification']
+        dateFormatExplain = 'format: yyyy-mm-dd HH:MM'
         colAWidth = len('Last Modification')
         colBWidth = 30
-        colCWidth = len('format: yyyy-mm-dd HH:MM')
+        colCWidth = len(dateFormatExplain)
         print('currentFileName: ', currentFileName)
         output = io.BytesIO()
         
@@ -216,11 +220,8 @@ class CaseMethod(Case):
                                            'default_date_format': 'yyyy-mm-dd HH:MM',
                                            'strings_to_numbers': True
                                        })  # Create Workbook
-        worksheet = workbook.add_worksheet(caseName)  # Add worksheet to workbook, with name contained in caseName
-        
         bold = workbook.add_format({'bold': True})  # Add a bold format to use to highlight cells
         italic = workbook.add_format({'italic': True, 'font_color': 'gray'})  # Add a italic format to use in cells
-        dateFormat = workbook.add_format({'num_format': 'yyyy-mm-dd HH:MM'})  # Add date format
         mergeFormatTitle = workbook.add_format({
             'font_size': 16,
             'font_color': 'black',
@@ -238,45 +239,48 @@ class CaseMethod(Case):
             'fg_color': 'silver'
         })
         
-        row = 0
-        col = 0
-        titleCounter = 0
-        for key, val in currentCaseData.items():
-            print('KEY: {}\t VAL: {}'.format(key, val))
-            if row == 0:
-                # Case Information Title
-                worksheet.merge_range(row, 0, 0, 2, 'Case ' + caseName, mergeFormatTitle)
-                worksheet.merge_range(row + 1, 0, row + 1, 2, 'Case Information', mergeFormatSubTitle)
-                row += 2
-            
-            if row == 8:
-                # Case Target Information Title
-                worksheet.merge_range(row, 0, row, 2, 'Target Information', mergeFormatSubTitle)
-                row += 1
-                
-            if row == 11:
-                # Case Dates Title
-                worksheet.merge_range(row, 0, row, 2, 'Case Dates', mergeFormatSubTitle)
-                row += 1
-            
-            worksheet.write_string(row, 0, columnTitles[titleCounter], bold)
+        for caseName in casesList:
+            print('caseName: ', caseName)
+            worksheet = workbook.add_worksheet(caseName)  # Add worksheet to workbook, with name contained in caseName
+            currentCaseData = dict(CaseMethod.get_case_by_case_name(caseName))
+            print('currentCaseData: ', currentCaseData)
+            row = 0
+            col = 0
+            titleCounter = 0
+            for key, val in currentCaseData.items():
+                print('KEY: {}\t VAL: {}'.format(key, val))
+                if row == 0:   # Case Information Title
+                    worksheet.merge_range(row, 0, 0, 2, 'Case ' + caseName, mergeFormatTitle)
+                    worksheet.merge_range(row + 1, 0, row + 1, 2, 'Case Information', mergeFormatSubTitle)
+                    row += 2
 
-            if key == 'groups':
-                val = ''
-                groups = currentCaseData['groups']
-                for idx, group in enumerate(groups):
-                    if idx != 0 and idx < len(groups):
-                        val += ', '
-                    val += group
-            if 'date' in key or 'last' in key:
-                worksheet.write_datetime(row, 1, val)
-            else:
-                worksheet.write(row, 1, val)
-            titleCounter += 1
-            row += 1
-        worksheet.set_column('A:A', colAWidth)
-        worksheet.set_column('B:B', colBWidth)
-        worksheet.set_column('C:C', colCWidth)
+                if row == 8:   # Case Target Information Title
+                    worksheet.merge_range(row, 0, row, 2, 'Target Information', mergeFormatSubTitle)
+                    row += 1
+
+                if row == 11:   # Case Dates Title
+                    worksheet.merge_range(row, 0, row, 2, 'Case Dates', mergeFormatSubTitle)
+                    row += 1
+
+                worksheet.write_string(row, 0, columnTitles[titleCounter], bold)
+
+                if key == 'groups':
+                    val = ''
+                    groups = currentCaseData['groups']
+                    for idx, group in enumerate(groups):
+                        if idx != 0 and idx < len(groups):
+                            val += ', '
+                        val += group
+                if 'date' in key or 'last' in key:
+                    worksheet.write_datetime(row, 1, val)
+                    worksheet.write_string(row, 2, dateFormatExplain, italic)
+                else:
+                    worksheet.write(row, 1, val)
+                titleCounter += 1
+                row += 1
+            worksheet.set_column('A:A', colAWidth)
+            worksheet.set_column('B:B', colBWidth)
+            worksheet.set_column('C:C', colCWidth)
         
         workbook.close()  # Close workbook
         print('Workbook Close: ', workbook)

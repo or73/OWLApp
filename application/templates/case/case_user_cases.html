@@ -63,7 +63,7 @@
                     {% for name, case in cases.items() %}
                         <tr>
                             <td class='align-top orSelectCase'>
-                                <input type='checkbox' id='{{ name }}' name='selectedCase' value='{{ name }}'  />
+                                <input type='checkbox' id='{{ name }}' name='selectedCase' value='{{ name }}' class='orSelectCaseBox' />
                                 <label for='{{ name }}'></label>
                             </td>
                             <td>
@@ -79,7 +79,7 @@
                                     </p>
                                 {% endfor %}
                             </td>
-                            <td><a href='#' class='orName'><strong>{{ case.name }}</strong></a> </td>
+                            <td><a href='#' class='orName' data-name='{{ case.name }}'><strong>{{ case.name }}</strong></a> </td>
                             <td>{{ case.type }}</td>
                             <!--<td>{ case.client_name }}</td>-->
                             <td>{{ case.case_id }}</td>
@@ -593,5 +593,118 @@
                 </form>
             </div> <!-- /.text-center -->
         </div> <!-- /#dialogDeleteCase -->
+
+        <div id='dialogViewCase' title='Case Details' class='orEmergentDialog orEmergentDialogWarning'>
+            <form id='formViewCase'>
+                <h2 id='viewCaseTitle'></h2>
+                <fieldset class='viewCaseFieldSet'>
+                    <legend>Case Information</legend>
+
+                    <div class='form-group row'>
+                        <label for='viewCaseId' class='col-sm-3 col-form-label'>ID</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseId' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+
+                    <div class='form-group row'>
+                        <label for='viewCaseName' class='col-sm-3 col-form-label'>Name</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseName' aria-describedby='viewCaseNameHelp' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+
+                    <div class='form-group row'>
+                        <label for='viewCaseDescription' class='col-sm-3 col-form-label'>Description</label>
+                        <div class='col-sm-9'>
+                            <textarea class='form-control' id='viewCaseDescription' rows='5' readonly></textarea>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+
+                    <div class='form-group row'>
+                        <label for='viewCaseStatus' class='col-sm-3 col-form-label'>Status</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseStatus' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+
+                    <div class='form-group row'>
+                        <label for='viewCaseType' class='col-sm-3 col-form-label'>Type</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseType' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+
+                    <div class='form-group row'>
+                        <label for='viewCaseGroups' class='col-sm-3 col-form-label'>Groups</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseGroups' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+                </fieldset>
+
+                <fieldset class='viewCaseFieldSet'>
+                    <legend>Target Information</legend>
+
+                    <div class='form-group row'>
+                        <label for='viewCaseTargetId' class='col-sm-3 col-form-label'>ID</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseTargetId' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+
+                    <div class='form-group row'>
+                        <label for='viewCaseTargetName' class='col-sm-3 col-form-label'>Name</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseTargetName' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+                </fieldset>
+
+
+                <fieldset class='viewCaseFieldSet'>
+                    <legend>Case Dates</legend>
+
+                    <div class='form-group row'>
+                        <label for='viewCaseCreationDate' class='col-sm-3 col-form-label'>Creation Date</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseCreationDate' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+
+                    <div class='form-group row'>
+                        <label for='viewCaseDueDate' class='col-sm-3 col-form-label'>Due Date</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseDueDate'/>
+                        </div>
+                    </div> <!-- /.form-group -->
+
+                    <div class='form-group row'>
+                        <label for='viewCaseLastModification' class='col-sm-3 col-form-label'>Last Modification</label>
+                        <div class='col-sm-9'>
+                            <input type='text' class='form-control' id='viewCaseLastModification' readonly/>
+                        </div> <!-- /.col -->
+                    </div> <!-- /.form-group -->
+                </fieldset>
+
+                <!---
+                        Case - View Buttons
+                --->
+                <div class='text-center orButtonsSubmitView'>
+                    <button id='buttonEditViewCase' type='button' name='edit' value='Edit'
+                            class='btn btn-success'>
+                        <i class='fad fa-edit'></i>{{ _('Edit') }}
+                    </button>
+                    <button id='buttonExportViewCase' type='button' name='export' value='Export'
+                            class='btn btn-secondary'>
+                        <i class='fad fa-file-export'></i> {{ _('Export') }}
+                    </button>
+                    <button id='buttonCancelViewCase' type='button' value='Cancel'
+                            class='btn btn-danger cancel_btn'>
+                        <i class='fad fa-times'></i>{{ _('Cancel') }}
+                    </button>
+                </div> <!-- /.text-center -->
+            </form>
+        </div> <!-- /#dialogViewCase -->
     </div> <!-- /#eventPanel -->
 {% endblock %}
