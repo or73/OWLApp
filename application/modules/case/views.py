@@ -7,15 +7,12 @@ Copyright (c) 2019. This Application has been developed by OR73.
 # GET: Show current user data
 # POST: Create new user
 # PUT: Update user data
-from flask import Blueprint, flash, redirect, request, render_template, Response, session, url_for
+from flask import Blueprint, flash, redirect, request, render_template, session, url_for
 from flask_login import current_user, login_required
 
 from .methods import CaseMethod
 
 from application.modules import init_logger
-
-import io
-import xlsxwriter
 
 case_bp = Blueprint('case_bp', __name__)
 
@@ -79,27 +76,54 @@ def cases():
 @case_bp.route('/cases/allGroups/')
 @login_required
 def allGroups():
+    """
+    Call CaseMethod methods to retrieve some information:
+    - get_all_cases_name_id: retrieve a list of dict {'name': <case_name>, 'case_id': <case_id>}
+    - get_all_groups_name: retrieve a list of dict {'name': <group_name>}
+    From each list of dicts, a new list is created containing only strings>
+    - casesIdList: list of all cases ID
+    - casesNameList: list of all cases name
+    - groupsLIst> list of all groups name
+    :return: dict containing all different groups name
+    """
     print('----------------- case_bp.route(/cases/allGroups/)')
     allGroupsName = CaseMethod.get_all_groups_name()
-    groupsList = []
+    allCasesIdAndName = CaseMethod.get_all_cases_name_id()
+    
     print('allGroupsName: ', allGroupsName)
+    casesIdList = []
+    casesNameList = []
+    groupsList = []
+    
+    # Create a couple of lists containing casesId and casesName
+    for case in allCasesIdAndName:
+        casesIdList.append(case['case_id'])
+        casesNameList.append(case['name'])
+    
+    # Create a list containing only unique groups name
     for group in allGroupsName:
         groupsList.append(group['name'])
     print('groupsList: ', groupsList)
-    return {'groupsList': groupsList}
+    return {
+        'casesIdList': casesIdList,
+        'casesNameList': casesNameList,
+        'groupsList': groupsList
+    }
 
 
-@case_bp.route('/case/file/', methods=['POST'])  # /<caseName>')
+@case_bp.route('/cases/allCasesNameId/')
 @login_required
-def caseFile():   # def caseFile(caseName: str):
-    # print('--------------------- caseFile </case/file/{}>'.format(caseName))
-    print('--------------------- caseFile </case/file>')
-    print('request.form: ', request.form)
+def allGroupsAndCases():
+    print('------------------ allGroupsAndCases </cases/allCasesNameId/>')
+    return CaseMethod.get_all_cases_name_id()
+
+
+@case_bp.route('/case/file/', methods=['POST'])
+@login_required
+def caseFile():
+    print('--------------------- caseFile </case/file/>')
     casesList = request.get_json()
-    print('casesList: ', casesList)
-    # toReturn = CaseMethod.setClassToExcelFile(caseName)   # Create Excel File of provided Case name
     toReturn = CaseMethod.setClassToExcelFile(casesList)
-    print('answer received from server side 1... ', toReturn)
     return toReturn
 
 

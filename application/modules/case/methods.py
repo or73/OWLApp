@@ -72,8 +72,21 @@ class CaseMethod(Case):
         return list(cases_collection.find({}, {'_id': 0}))
     
     @staticmethod
+    def get_all_cases_name() -> list:
+        # Return a list of all cases' name
+        print('----------------- get_all_cases_name')
+        cases_collection = mongo.db.cases
+        return list(cases_collection.find({}, {'_id': 0, 'name': 1}))
+        
+    @staticmethod
+    def get_all_cases_name_id() -> list:
+        # Return a list of all cases' name & id
+        cases_collection = mongo.db.cases
+        return list(cases_collection.find({}, {'_id': 0, 'case_id': 1, 'name': 1}))
+    
+    @staticmethod
     def get_all_groups_name() -> list:
-        # Return a list of all groups' names
+        # Return a list of all groups' name
         # return list(GroupMethod.get_all_group_names())
         print('------------------ get_all_groups_name')
         groups_collection = mongo.db.groups
@@ -245,10 +258,8 @@ class CaseMethod(Case):
             currentCaseData = dict(CaseMethod.get_case_by_case_name(caseName))
             print('currentCaseData: ', currentCaseData)
             row = 0
-            col = 0
             titleCounter = 0
             for key, val in currentCaseData.items():
-                print('KEY: {}\t VAL: {}'.format(key, val))
                 if row == 0:   # Case Information Title
                     worksheet.merge_range(row, 0, 0, 2, 'Case ' + caseName, mergeFormatTitle)
                     worksheet.merge_range(row + 1, 0, row + 1, 2, 'Case Information', mergeFormatSubTitle)
