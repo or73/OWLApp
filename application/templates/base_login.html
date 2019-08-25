@@ -26,7 +26,7 @@
 		<link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/data_tables/datatables.css") }}' />
         <!-- bootstrap_select 1.13.9 -->
         <link rel='stylesheet' href='{{ url_for("static", filename="dist/css/includes/bootstrap_select/bootstrap-select.min.css") }}' />
-		<!-- Custom Styling -->
+        <!-- Custom Styling -->
 		<link rel='stylesheet' href='{{ url_for("static", filename="dist/css/style.css") }}' />
 
 		<!-- modernizr 2.8.3 -->
@@ -68,6 +68,651 @@
         </footer>
         -->
 
+        <!--
+           ----------------------- Dialog - Create New Case -----------------------
+        -->
+        <div class='modal fade' id='dialogCreateNewCase'
+            tabindex='-1' role='dialog' aria-labelledby='createCaseTitle' aria-hidden='true'>
+           <div class='modal-dialog modal-dialog-centered orModalLg' role='document'>
+               <div class='modal-content'>
+                 <div class='modal-header orModalHeaderWarning'>
+                       <h3 class='modal-title my-auto' id='createCaseTitle'>Create Case</h3>
+                       <button type='button' class='close my-auto' data-dismiss='modal' aria-label='{{ _('Close') }}'>
+                           <span class='orButtonClose' aria-hidden='true'>&times</span>
+                       </button>
+                   </div> <!-- /.modal-header -->
+
+                   <div class='modal-body'>
+                       <div id='formAlertCreateCase' class='alert alert-dark orAlertMsg mx-auto'>
+                           {{ _('All fields marked with') }} <span class='orRequiredField'>*</span> {{ _('are required') }}
+                       </div> <!-- /#form_alert -->
+
+                       <form id='formCreateNewCase' action='{{ url_for("case_bp.create") }}' method='post'>
+                           <!---
+                                   Case - Create Name
+                           --->
+                           <div class='form-group row'>
+                               <label for='caseInputName' class='col-2 col-form-label'>
+                                   <span class='orRequiredField'>*</span><strong>{{ _('Name') }}</strong>:
+                               </label>
+                               <div class='col-10'>
+                                   <input id='caseInputName' name='name' type='text' class='form-control'
+                                          placeholder='{{ _('Case Name') }}' aria-describedby='caseNameHelp'/>
+                                   <i class='fad fa-times orInputIconTimes' id='caseNameIconTimes'></i>
+                                   <i class='fad fa-check orInputIconCheck' id='caseNameIconCheck'></i>
+                                   <small id='caseNameHelp'
+                                          class='form-text text-muted orInvalidInput orAlertMessageFormValidation'>
+                                       {{ _('Input a valid Case name') }}
+                                   </small>
+                               </div> <!-- /.col -->
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Create ID
+                           --->
+                           <div class='form-group row'>
+                               <label for='caseInputId' class='col-2 col-form-label'>
+                                   <span class='orRequiredField'>*</span><strong>ID</strong>:
+                               </label>
+                               <div class='col-10'>
+                                   <input id='caseInputId' name='id' type='text' class='form-control'
+                                          placeholder='{{ _('Case ID') }}' aria-describedby='caseIdHelp' />
+                                   <i class='fad fa-times orInputIconTimes' id='caseIdIconTimes'></i>
+                                   <i class='fad fa-check orInputIconCheck' id='caseIdIconCheck'></i>
+                                   <small id='caseIdHelp'
+                                          class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                       {{ _('Input a valid Case ID') }}
+                                   </small>
+                               </div> <!-- /.col -->
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Create Description
+                           --->
+                           <div class='form-group row'>
+                               <label for='caseTextareaDescription' class='col-2 col-form-label'>
+                                   <span class='orRequiredField'>*</span><strong>{{ _('Description') }}</strong>:
+                               </label>
+                               <div class='col-10'>
+                                   <textarea id='caseTextareaDescription' name='description' class='form-control' rows='4'
+                                             placeholder='Case Description' aria-describedby='caseDescriptionHelp'></textarea>
+                                   <i class='fad fa-times orInputIconTimes' id='caseDescriptionIconTimes'></i>
+                                   <i class='fad fa-check orInputIconCheck' id='caseDescriptionIconCheck'></i>
+                                   <small id='caseDescriptionHelp'
+                                          class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                       { _('Input a valid Case Description') }}
+                                   </small>
+                               </div> <!-- /.col -->
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Create Hidden Input
+                           --->
+                           <input id='caseHiddenInputCreateType' name='type' hidden aria-label=''/>
+                           <input id='caseHiddenInputCreateStatus' name='status' hidden aria-label=''/>
+                           <input id='caseHiddenInputCreateGroup' name='group' hidden aria-label='' />
+
+                           <!---
+                                   Case - Create Type - Status - Group
+                           --->
+                           <div class='form-group row align-items-center h-100'>
+                               <!---
+                                   Case - Create Type
+                               --->
+                               <fieldset class='col-4 text-left orFieldSet'>
+                                   <legend class='orClassLegend'>
+                                       <strong>{{ _('Type') }}</strong> <small>({{ _('Default: ') }} <strong>{{ _('Fraud') }}</strong>)</small>:
+                                   </legend>
+
+                                   <div class='col-12'>
+                                       <div class='input-group'>
+                                           <div class='input-group-btn btn-group w-100'>
+                                               <button type='button' class='btn dropdown-toggle orButtonSelect' id='buttonCaseCreateType'
+                                                       data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                                   <i class='fad fa-user-secret orCaseStatusIconFraud'></i>{{ _('Fraud') }}
+                                                   <i class='fas fa-caret-down orClassCaretDown'></i>
+                                               </button>
+                                               <div class='dropdown-menu orDropdownMenu'>
+                                                   <a class='dropdown-item orClassTypeCreateItem' href='#'><i class='fad fa-user-secret orCaseStatusIconFraud'></i>{{ _('Fraud') }}</a>
+                                                   <a class='dropdown-item orClassTypeCreateItem' href='#'><i class='fad fa-baby orCaseStatusIconIcac'></i>{{ _('ICAC') }}</a>
+                                                   <a class='dropdown-item orClassTypeCreateItem' href='#'><i class='fad fa-balance-scale orCaseStatusIconLegal'></i>{{ _('Legal') }}</a>
+                                                   <a class='dropdown-item orClassTypeCreateItem' href='#'><i class='fad fa-user-shield orCaseStatusIconSecurity'></i>{{ _('Security') }}</a>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </fieldset>
+
+                               <!---
+                                   Case - Create Status
+                               --->
+                               <fieldset class='col-4 text-left orFieldSet'>
+                                   <legend class='orClassLegend'>
+                                       <strong>{{ _('Status') }}</strong> <small>({{ _('Default: ') }} <strong>{{ _('Draft') }}</strong>)</small>:
+                                   </legend>
+                                   <!--<div class='btn-group open dropdown col-10 mx-auto' id='dropdownSelectTypeButton'>-->
+                                   <div class='col-12'>
+                                       <div class='input-group'>
+                                           <div class='input-group-btn btn-group w-100'>
+                                               <button type='button' class='btn dropdown-toggle orButtonSelect orSVGsml' id='buttonCaseCreateStatus'
+                                                       data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                                   <i class='fad fa-circle orCaseStatusIconDraft'></i>{{ _('Draft') }}
+                                                   <i class='fas fa-caret-down orClassCaretDown'></i>
+                                               </button>
+                                               <div class='dropdown-menu orDropdownMenu orSVGsml'>
+                                                   <a class='dropdown-item orClassStatusCreateItem orSVGsml' href='#'><i class='fad fa-circle orCaseStatusIconDraft'></i>{{ _('Draft') }}</a>
+                                                   <a class='dropdown-item orClassStatusCreateItem orSVGsml' href='#'><i class='fad fa-play orCaseStatusIconPlay'></i>{{ _('Active') }}</a>
+                                                   <a class='dropdown-item orClassStatusCreateItem orSVGsml' href='#'><i class='fad fa-pause orCaseStatusIconOnHold'></i>{{ _('On hold') }}</a>
+                                                   <a class='dropdown-item orClassStatusCreateItem orSVGsml' href='#'><i class='fad fa-stop orCaseStatusIconClosed'></i>{{ _('Closed') }}</a>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </fieldset>
+
+                               <!---
+                                   Case - Create Group
+                               --->
+                               <fieldset class='col-4 text-left orFieldSet'>
+                                   <legend class='orClassLegend'>
+                                       <strong>{{ _('Groups') }}</strong> <small>({{ _('Default: ') }} <strong>{{ _('Some Group') }}</strong>)</small>:
+                                   </legend>
+                                   <div class='col-12'>
+                                       <div class='input-group'>
+                                           <div class='input-group-btn btn-group w-100'>
+                                               <button type='button' class='btn dropdown-toggle orButtonSelect orSVGsml' id='buttonCaseCreateGroups'
+                                                       data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                                   {{ _('Select Case Group') }} <i class='fas fa-caret-down orClassCaretDown'></i>
+                                               </button>
+                                               <div class='dropdown-menu orDropdownMenu orSVGsml' id='dropdownGroupCreateMenuList'></div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </fieldset>
+                           </div> <!-- /.form-group -->
+
+                           <div class='form-group row'>
+                               <fieldset class='col-12 text-left orFieldSet'>
+                                   <div class='row' id='dueDateAddClient'>
+                                       <fieldset class='orClassFieldset col-7'>
+                                           <legend class='orClassLegend'>
+                                               <strong>{{ _('Due Date') }}</strong> <small>({{ _('Default: ') }} <strong>{{ _('90 days from now') }}</strong>)</small>:
+                                           </legend>
+
+                                           <div class='col-12'>
+                                               <input type='datetime-local' id='caseInputDueDate' class='form-control' name='dueDate'
+                                                      aria-describedby='caseDueDateHelp' aria-label='' />
+                                               <i class='fad fa-times orInputIconTimes' id='caseDueDateIconTimes'></i>
+                                               <i class='fad fa-check orInputIconCheck' id='caseDueDateIconCheck'></i>
+                                               <small id='caseDueDateHelp'
+                                                      class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                                   {{ _('Default Due Date, is 90 days from current date') }}
+                                               </small>
+                                           </div> <!-- /.col -->
+                                       </fieldset>
+
+                                       <div class='col-5' id='addClient'>
+                                           <a href='#' class='orAnchorAddClient btn btn-outline-danger' role='button'>
+                                               <i class='fad fa-plus'></i>{{ _('Add Information') }}
+                                           </a>
+                                       </div> <!-- /.col -->
+                                   </div> <!-- /.row -->
+                               </fieldset>
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Create User Information
+                           --->
+                           <div class='orClientInformation'>
+                               <fieldset class='form-group row' id='clientInformationFieldSet'>
+                                   <legend>User Information</legend>
+                                   <div class='form-group row'>
+                                       <label for='caseInputClientName' class='col-2 col-form-label'>
+                                           <strong>{{ _('Name') }}</strong>:
+                                       </label>
+                                       <div class='col-10'>
+                                           <input type='text' id='caseInputClientName' name='clientName' class='form-control'
+                                                  placeholder='Client Name' aria-describedby='caseClientNameHelp' />
+                                           <i class='fad fa-times orInputIconTimes' id='caseClientNameIconTimes'></i>
+                                           <i class='fad fa-check orInputIconCheck' id='caseClientNameIconCheck'></i>
+                                           <small id='caseClientNameHelp'
+                                                  class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                               {{ _('Input a valid Client name') }}
+                                           </small>
+                                       </div> <!-- /.col -->
+                                   </div> <!-- /.form_group -->
+
+                                   <div class='form-group row'>
+                                       <label for='caseInputClientId' class='col-2 col-form-label'>
+                                           <strong>{{ _('ID') }}</strong>:
+                                       </label>
+                                       <div class='col-10'>
+                                           <input type='text' id='caseInputClientId' class='form-control' name='clientId'
+                                                  placeholder='Client ID' aria-describedby='caseClientIdHelp' />
+                                           <i class='fad fa-times orInputIconTimes' id='caseClientIdIconTimes'></i>
+                                           <i class='fad fa-check orInputIconCheck' id='caseClientIdIconCheck'></i>
+                                           <small id='caseClientIdHelp'
+                                                  class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                               {{ _('Input a valid Client ID') }}
+                                           </small>
+                                       </div> <!-- /.col -->
+                                   </div> <!-- /.form_group -->
+
+                                   <div class='form-group row'>
+                                       <label for='caseInputClientDescription' class='col-2 col-form-label'>
+                                           <strong>{{ _('Description') }}</strong>:
+                                       </label>
+                                       <div class='col-10'>
+                                           <textarea id='caseInputClientDescription' class='form-control' name='clientDescription'
+                                                     placeholder='Client Details' aria-describedby='caseClientDescriptionHelp'></textarea>
+                                           <i class='fad fa-times orInputIconTimes' id='caseClientDescriptionIconTimes'></i>
+                                           <i class='fad fa-check orInputIconCheck' id='caseClientDescriptionIconCheck'></i>
+                                           <small id='caseClientDescriptionHelp'
+                                                  class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                               {{ _('Input valid Client description') }}
+                                           </small>
+                                       </div> <!-- /.col -->
+                                   </div> <!-- /.form_group -->
+                               </fieldset>
+                           </div> <!-- /.orUserInformation -->
+
+                           <!---
+                                   Case - Create Buttons
+                           --->
+                           <div class='text-center orButtonsSubmitCancel'>
+                               <button id='buttonValidateCreateCase' type='button' name='validate' value='submit'
+                                       class='btn btn-success'>
+                                   <i class='fad fa-check'></i>{{ _('Submit') }}
+                               </button>
+                               <button id='buttonSubmitCreateCase' type='submit' name='submit' value='submit'
+                                       class='btn btn-success' hidden>{{ _('Submit') }}
+                               </button>
+                               <button id='buttonCancelCreateCase' type='button' value='cancel'
+                                       class='btn btn-danger orCancelBtn' data-dismiss='modal'>
+                                   <i class='fad fa-times'></i>{{ _('Cancel') }}
+                               </button>
+                           </div> <!-- /.text-center -->
+                       </form>
+                   </div> <!-- /.modal-body -->
+               </div> <!-- /.modal-content -->
+           </div> <!-- /.modal-dialog -->
+        </div> <!-- /#dialogCreateNewCase -->
+
+        <!--
+           ----------------------- Dialog - Edit Case -----------------------
+        -->
+        <div class='modal fade' id='dialogEditCase'
+             tabindex='-1' role='dialog' aria-labelledby='editCaseTitle' aria-hidden='true'>
+            <div class='modal-dialog modal-dialog-centered orModalLg' role='document'>
+                <div class='modal-content'>
+                    <div class='modal-header orModalHeaderWarning'>
+                        <h3 class='modal-title my-auto' id='ediCaseTitle'>Edit Case</h3>
+                        <button type='button' class='close my-auto'
+                                data-dismiss='modal' aria-label='{{ _('Close') }}'>
+                            <span class='orButtonClose' aria-hidden='true'>&times</span>
+                        </button>
+                    </div> <!-- /.modal-header -->
+
+                    <div class='modal-body'>
+                        <div id='formAlertEditCase' class='alert alert-dark orAlertMsg mx-auto'>
+                           {{ _('All fields marked with') }} <span class='required_field'>*</span> {{ _('are required') }}
+                       </div> <!-- /#form_alert -->
+
+                       <form id='formEditCase' action=''  method='post'>
+                           <!---
+                                   Case - Edit Name
+                           --->
+                           <div class='form-group row'>
+                               <label for='caseEditInputName' class='col-2 col-form-label'>
+                                   <span class='orRequiredField'>*</span><strong>{{ _('Name') }}</strong>:
+                               </label>
+                               <div class='col-10'>
+                                   <input id='caseEditInputName' name='name' type='text' class='form-control'
+                                          placeholder='{{ _('Case Name') }}' aria-describedby='caseNameEditHelp'/>
+                                   <i class='fad fa-times orInputIconTimes' id='caseEditNameIconTimes'></i>
+                                   <i class='fad fa-check orInputIconCheck' id='caseEditNameIconCheck'></i>
+                                   <small id='caseEditNameHelp'
+                                          class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                       {{ _('Input a valid Case name') }}
+                                   </small>
+                               </div> <!-- /.col -->
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Edit ID
+                           --->
+                           <div class='form-group row'>
+                               <label for='caseEditInputId' class='col-2 col-form-label'>
+                                   <span class='orRequiredField'>*</span><strong>ID</strong>:
+                               </label>
+                               <div class='col-10'>
+                                   <input id='caseEditInputId' name='id' type='text' class='form-control'
+                                          placeholder='{{ _('Case ID') }}' aria-describedby='caseIdEditHelp' />
+                                   <i class='fad fa-times orInputIconTimes' id='caseEditIdIconTimes'></i>
+                                   <i class='fad fa-check orInputIconCheck' id='caseEditIdIconCheck'></i>
+                                   <small id='caseEditIdHelp'
+                                          class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                       {{ _('Input a valid Case ID') }}
+                                   </small>
+                               </div> <!-- /.col -->
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Edit Description
+                           --->
+                           <div class='form-group row'>
+                               <label for='caseEditTextareaDescription' class='col-2 col-form-label'>
+                                   <span class='orRequiredField'>*</span><strong>{{ _('Description') }}</strong>:
+                               </label>
+                               <div class='col-10'>
+                                   <textarea id='caseEditTextareaDescription' name='description' class='form-control'
+                                             rows='4' placeholder='Case Description'
+                                             aria-describedby='caseDescriptionHelp'></textarea>
+                                   <i class='fad fa-times orInputIconTimes' id='caseEditDescriptionIconTimes'></i>
+                                   <i class='fad fa-check orInputIconCheck' id='caseEditDescriptionIconCheck'></i>
+                                   <small id='caseEditDescriptionHelp'
+                                          class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                       {{ _('Input a valid Case Description') }}
+                                   </small>
+                               </div> <!-- /.col -->
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Edit
+                           --->
+                           <input id='caseHiddenInputEditType' name='type' hidden aria-label=''/>
+                           <input id='caseHiddenInputEditStatus' name='status' hidden aria-label=''/>
+                           <input id='caseHiddenInputEditGroup' name='group' hidden aria-label='' />
+
+                           <!---
+                                   Case - Edit Type - Status - Group
+                           --->
+                           <div class='form-group row align-items-center h-100'>
+                               <fieldset class='col-4 text-left orFieldSet'>
+                                   <legend class='orClassLegend'>
+                                       <strong>{{ _('Type') }}</strong>:
+                                   </legend>
+                                   <!--<div class='btn-group open dropdown col-10 mx-auto' id='dropdownSelectTypeButton'>-->
+                                   <div class='col-12'>
+                                       <div class='input-group'>
+                                           <div class='input-group-btn btn-group w-100'>
+                                               <button type='button' class='btn dropdown-toggle orButtonSelect' id='buttonCaseEditType'
+                                                       data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                                   {{ _('Select Case Type') }} <i class='fas fa-caret-down orClassCaretDown'></i>
+                                               </button>
+                                               <div class='dropdown-menu orDropdownMenu'>
+                                                   <a class='dropdown-item orClassTypeEditItem' href='#'><i class='fad fa-user-secret orCaseStatusIconFraud'></i>{{ _('Fraud') }}</a>
+                                                   <a class='dropdown-item orClassTypeEditItem' href='#'><i class='fad fa-baby orCaseStatusIconIcac'></i>{{ _('ICAC') }}</a>
+                                                   <a class='dropdown-item orClassTypeEditItem' href='#'><i class='fad fa-balance-scale orCaseStatusIconLegal'></i>{{ _('Legal') }}</a>
+                                                   <a class='dropdown-item orClassTypeEditItem' href='#'><i class='fad fa-user-shield orCaseStatusIconSecurity'></i>{{ _('Security') }}</a>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </fieldset>
+
+                               <!---
+                                   Case - Edit Status
+                               --->
+                               <fieldset class='col-4 text-left orFieldSet'>
+                                   <legend class='orClassLegend'>
+                                       <strong>{{ _('Status') }}</strong>:
+                                   </legend>
+                                   <!--<div class='btn-group open dropdown col-10 mx-auto' id='dropdownSelectTypeButton'>-->
+                                   <div class='col-12'>
+                                       <div class='input-group'>
+                                           <div class='input-group-btn btn-group w-100'>
+                                               <button type='button' class='btn dropdown-toggle orButtonSelect orSVGsml' id='buttonCaseEditStatus'
+                                                       data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                                   {{ _('Select Case Status') }} <i class='fas fa-caret-down orClassCaretDown'></i>
+                                               </button>
+                                               <div class='dropdown-menu orDropdownMenu orSVGsml'>
+                                                   <a class='dropdown-item orClassStatusEditItem orSVGsml' href='#'><i class='fad fa-circle orCaseStatusIconDraft'></i>{{ _('Draft') }}</a>
+                                                   <a class='dropdown-item orClassStatusEditItem orSVGsml' href='#'><i class='fad fa-play orCaseStatusIconPlay'></i>{{ _('Active') }}</a>
+                                                   <a class='dropdown-item orClassStatusEditItem orSVGsml' href='#'><i class='fad fa-pause orCaseStatusIconOnHold'></i>{{ _('On hold') }}</a>
+                                                   <a class='dropdown-item orClassStatusEditItem orSVGsml' href='#'><i class='fad fa-stop orCaseStatusIconClosed'></i>{{ _('Closed') }}</a>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </fieldset>
+
+                               <!---
+                                       Case - Edit Groups
+                               --->
+                               <fieldset class='col-4 text-left orFieldSet'>
+                                   <legend class='orClassLegend'>
+                                       <strong>{{ _('Groups') }}</strong>:
+                                   </legend>
+                                   <div class='col-12'>
+                                       <div class='input-group'>
+                                           <div class='input-group-btn btn-group w-100'>
+                                               <button type='button' class='btn dropdown-toggle orButtonSelect orSVGsml' id='buttonCaseEditGroups'
+                                                       data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                                   {{ _('Select Case Group') }} <i class='fas fa-caret-down orClassCaretDown'></i>
+                                               </button>
+                                               <div class='dropdown-menu orDropdownMenu orSVGsml' id='dropdownGroupEditMenuList'></div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </fieldset>
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Edit Due Date
+                           --->
+                           <div class='form-group row'>
+                               <fieldset class='orClassFieldset col-7'>
+                                   <legend class='orClassLegend'>
+                                       <strong>{{ _('Due Date') }}</strong>:
+                                   </legend>
+                                   <div class='col-10'>
+                                       <input type='datetime-local' id='caseEditInputDueDate' class='form-control'
+                                              name='dueDate' aria-describedby='caseEditDueDateHelp' aria-label='' />
+                                       <i class='fad fa-times orInputIconTimes' id='caseEditDueDateIconTimes'></i>
+                                       <i class='fad fa-check orInputIconCheck' id='caseEditDueDateIconCheck'></i>
+                                       <small id='caseEditDueDateHelp'
+                                              class='form-text text-muted orInvalidInputText orAlertMessageFormValidation'>
+                                           {{ _('Default Due Date, is 90 days from current date') }}
+                                       </small>
+                                   </div> <!-- /.col -->
+                               </fieldset>
+                           </div> <!-- /.form-group -->
+
+                           <!---
+                                   Case - Edit Buttons
+                           --->
+                           <div class='text-center orButtonsSubmitCancel'>
+                               <button id='buttonValidateEditCase' type='button' name='validate' value='submit'
+                                       class='btn btn-success'>
+                                   <i class='fad fa-check'></i>{{ _('Submit') }}
+                               </button>
+                               <button id='buttonSubmitEditCase' type='submit' name='submit' value='submit'
+                                       class='btn btn-success' hidden>{{ _('Submit') }}
+                               </button>
+                               <button id='buttonCancelEditCase' type='button' value='cancel'
+                                       class='btn btn-danger cancel_btn' data-dismiss='modal'>
+                                   <i class='fad fa-times'></i>{{ _('Cancel') }}
+                               </button>
+                           </div> <!-- /.text-center -->
+                       </form>
+                    </div><!-- /.modal-body-->
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div> <!-- /#dialogEditCase -->
+
+        <!--
+           ----------------------- Dialog - Delete Case -----------------------
+        -->
+        <div class='modal fade' id='dialogDeleteCase'
+             tabindex='-1' role='dialog' aria-labelledby='deleteCaseTitle' aria-hidden='true'>
+            <div class='modal-dialog modal-dialog-centered orModalLg' role='document'>
+                <div class='modal-content'>
+                    <div class='modal-header orModalHeaderDanger'>
+                        <h3 class='modal-title my-auto' id='deleteCaseTitle'>Delete Case</h3>
+                        <button type='button' class='close my-auto'
+                                data-dismiss='modal' aria-label='{{ _('Close') }}'>
+                            <span class='orButtonClose' aria-hidden='true'>&times</span>
+                        </button>
+                    </div> <!-- /.modal-header -->
+
+                    <div class='modal-body'>
+                        <div class='text-center orButtonsSubmitCancel'>
+                           <form id='formDeleteCase' action='' method='post'>
+                               <input id='inputCaseToDelete' hidden aria-label=''/>
+                               <h2>{{ _('Deleting Case') }}</h2>
+                               <h3>Are you sure, you want to delete the case <span class='orClassToDelete' id='classToDelete'></span></h3>
+
+                               <button id='buttonValidateDeleteCase' type='button' name='validate' value='submit'
+                                       class='btn btn-success'>
+                                   <i class='fad fa-check'></i>{{ _('Delete') }}
+                               </button>
+                               <button id='buttonSubmitDeleteCase' type='submit' name='submit' value='submit'
+                                       class='btn btn-success' hidden>{{ _('Submit') }}</button>
+                               <button id='buttonCancelDeleteCase' type='button' value='Cancel'
+                                       class='btn btn-danger cancel_button' data-dismiss='modal'>
+                                   <i class='fad fa-times'></i>{{ _('Cancel') }}
+                               </button>
+                           </form>
+                       </div> <!-- /.text-center -->
+                    </div><!-- /.modal-body-->
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div> <!-- /#dialogDeleteCase -->
+
+        <!--
+           ----------------------- Dialog - View Case -----------------------
+        -->
+        <div class='modal fade' id='dialogViewCase'
+             tabindex='-1' role='dialog' aria-labelledby='viewCaseTitle' aria-hidden='true'>
+            <div class='modal-dialog modal-dialog-centered orModalLg' role='document'>
+                <div class='modal-content'>
+                    <div class='modal-header orModalHeaderInfo'>
+                        <h3 class='modal-title my-auto' id='viewCaseTitle'>View Case</h3>
+                        <button type='button' class='close my-auto'
+                                data-dismiss='modal' aria-label='{{ _('Close') }}'>
+                            <span class='orButtonClose' aria-hidden='true'>&times</span>
+                        </button>
+                    </div> <!-- /.modal-header -->
+
+                    <div class='modal-body'>
+                        <form id='formViewCase'>
+                           <h2 id='viewCaseTitle'></h2>
+                           <fieldset class='viewCaseFieldSet'>
+                               <legend>Case Information</legend>
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseId' class='col-sm-3 col-form-label'>ID</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseId' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseName' class='col-sm-3 col-form-label'>Name</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseName' aria-describedby='viewCaseNameHelp' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseDescription' class='col-sm-3 col-form-label'>Description</label>
+                                   <div class='col-sm-9'>
+                                       <textarea class='form-control' id='viewCaseDescription' rows='5' readonly></textarea>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseStatus' class='col-sm-3 col-form-label'>Status</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseStatus' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseType' class='col-sm-3 col-form-label'>Type</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseType' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseGroups' class='col-sm-3 col-form-label'>Groups</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseGroups' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+                           </fieldset>
+
+                           <fieldset class='viewCaseFieldSet'>
+                               <legend>Target Information</legend>
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseTargetId' class='col-sm-3 col-form-label'>ID</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseTargetId' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseTargetName' class='col-sm-3 col-form-label'>Name</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseTargetName' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+                           </fieldset>
+
+
+                           <fieldset class='viewCaseFieldSet'>
+                               <legend>Case Dates</legend>
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseCreationDate' class='col-sm-3 col-form-label'>Creation Date</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseCreationDate' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseDueDate' class='col-sm-3 col-form-label'>Due Date</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseDueDate'/>
+                                   </div>
+                               </div> <!-- /.form-group -->
+
+                               <div class='form-group row'>
+                                   <label for='viewCaseLastModification' class='col-sm-3 col-form-label'>Last Modification</label>
+                                   <div class='col-sm-9'>
+                                       <input type='text' class='form-control' id='viewCaseLastModification' readonly/>
+                                   </div> <!-- /.col -->
+                               </div> <!-- /.form-group -->
+                           </fieldset>
+
+                           <!---
+                                   Case - View Buttons
+                           --->
+                           <div class='text-center orButtonsSubmitView'>
+                               <button id='buttonEditViewCase' type='button' name='edit' value='Edit'
+                                       class='btn btn-success'
+                                       data-dismiss='modal'  data-toggle='modal' data-target='#dialogEditCase'>
+                                   <i class='fad fa-edit'></i>{{ _('Edit') }}
+                               </button>
+                               <button id='buttonExportViewCase' type='button' name='export' value='Export'
+                                       class='btn btn-secondary'
+                                       data-dismiss='modal'>
+                                   <i class='fad fa-file-export'></i> {{ _('Export') }}
+                               </button>
+                               <button id='buttonCancelViewCase' type='button' value='Cancel'
+                                       class='btn btn-danger cancel_btn' data-dismiss='modal'>
+                                   <i class='fad fa-times'></i>{{ _('Cancel') }}
+                               </button>
+                           </div> <!-- /.text-center -->
+                       </form>
+                    </div><!-- /.modal-body-->
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div> <!-- /#dialogViewCase -->
+
         <!-- jQuery 3.4.1 -->
 		<script src = '{{ url_for("static", filename="dist/js/includes/jquery/jquery.min.js") }}'></script>
 		<!-- fontawesome 5.10.0 -->
@@ -84,7 +729,7 @@
 		<script src='{{ url_for("static", filename="dist/js/includes/bootstrap_show_password/bootstrap-show-password.js") }}'></script>
         <!-- bootstrap_select 1.13.9 -->
 		<script src='{{ url_for("static", filename="dist/js/includes/bootstrap_select/bootstrap-select.min.js") }}'></script>
-		<!-- Custom Scripts -->
+        <!-- Custom Scripts -->
 		<script src = '{{ url_for("static", filename="dist/js/script.js", type = "text/javascript") }}'></script>
     </body>
 </html>
