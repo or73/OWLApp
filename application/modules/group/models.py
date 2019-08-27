@@ -12,14 +12,14 @@ class Group:
         self.__id = group['_id']
         self.__name = group['name']
         self.__description = group['description']
-        self.__creation_date = self.set_current_date()
-        self.__last_modification_date = self.set_current_date()
+        self.__creationDate = self.set_current_date()
+        self.__lastModificationDate = self.set_current_date()
         self.__managers = group['user_groups_manager']
         self.__users = group['user_groups']
 
     def __repr__(self) -> str:
         return '<Group\n name: {}\nDescription: {}\nCreation Date: {}\nLast Modification: {}\nmanagers: {}\nUsers: {}' \
-            .format(self.__name, self.__description, self.__creation_date, self.__last_modification_date,
+            .format(self.__name, self.__description, self.__creationDate, self.__lastModificationDate,
                     self.__managers, self.__users)
 
     # -------------- getters
@@ -29,8 +29,8 @@ class Group:
         return {
             'name': self.__name,
             'description': self.__description,
-            'creation_date': self.__creation_date,
-            'last_modification': self.__last_modification_date,
+            'creationDate': self.__creationDate,
+            'lastModification': self.__lastModificationDate,
             'managers': self.__managers,
             'users': self.__users
         }
@@ -51,14 +51,14 @@ class Group:
         return self.__description
 
     @property
-    def creation_date(self) -> datetime:
+    def creationDate(self) -> datetime:
         # Return group creation date
-        return self.__creation_date
+        return self.__creationDate
 
     @property
-    def last_modification_date(self) -> datetime:
-        # Return last_modification_date
-        return self.__last_modification_date
+    def lastModificationDate(self) -> datetime:
+        # Return lastModificationDate
+        return self.__lastModificationDate
 
     @property
     def managers(self) -> list:
@@ -86,17 +86,17 @@ class Group:
         # Set description
         self.__description = new_description
 
-    @creation_date.setter
-    def creation_date(self, new_creation_date: datetime) -> None:
-        print('new_creation_date: ', new_creation_date)
-        # Set creation_date
-        self.__creation_date = self.set_current_date()
+    @creationDate.setter
+    def creationDate(self, new_creationDate: datetime) -> None:
+        print('new_creationDate: ', new_creationDate)
+        # Set creationDate
+        self.__creationDate = self.set_current_date()
 
-    @last_modification_date.setter
-    def last_modification_date(self, new_last_modification_date):
-        # Set last_modification_date
-        print('new_last_modification_date: ', new_last_modification_date)
-        self.__last_modification_date = self.set_current_date()
+    @lastModificationDate.setter
+    def lastModificationDate(self, new_lastModificationDate):
+        # Set lastModificationDate
+        print('new_lastModificationDate: ', new_lastModificationDate)
+        self.__lastModificationDate = self.set_current_date()
 
     @managers.setter
     def managers(self, new_managers_list: list) -> None:

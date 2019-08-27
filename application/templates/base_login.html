@@ -73,7 +73,7 @@
         -->
         <div class='modal fade' id='dialogCreateNewCase'
             tabindex='-1' role='dialog' aria-labelledby='createCaseTitle' aria-hidden='true'>
-           <div class='modal-dialog modal-dialog-centered orModalLg' role='document'>
+           <div class='modal-dialog modal-dialog-centered modal-lg' role='document'>
                <div class='modal-content'>
                  <div class='modal-header orModalHeaderWarning'>
                        <h3 class='modal-title my-auto' id='createCaseTitle'>Create Case</h3>
@@ -343,7 +343,7 @@
         -->
         <div class='modal fade' id='dialogEditCase'
              tabindex='-1' role='dialog' aria-labelledby='editCaseTitle' aria-hidden='true'>
-            <div class='modal-dialog modal-dialog-centered orModalLg' role='document'>
+            <div class='modal-dialog modal-dialog-centered modal-lg' role='document'>
                 <div class='modal-content'>
                     <div class='modal-header orModalHeaderWarning'>
                         <h3 class='modal-title my-auto' id='ediCaseTitle'>Edit Case</h3>
@@ -546,7 +546,7 @@
         -->
         <div class='modal fade' id='dialogDeleteCase'
              tabindex='-1' role='dialog' aria-labelledby='deleteCaseTitle' aria-hidden='true'>
-            <div class='modal-dialog modal-dialog-centered orModalLg' role='document'>
+            <div class='modal-dialog modal-dialog-centered modal-lg' role='document'>
                 <div class='modal-content'>
                     <div class='modal-header orModalHeaderDanger'>
                         <h3 class='modal-title my-auto' id='deleteCaseTitle'>Delete Case</h3>
@@ -585,7 +585,7 @@
         -->
         <div class='modal fade' id='dialogViewCase'
              tabindex='-1' role='dialog' aria-labelledby='viewCaseTitle' aria-hidden='true'>
-            <div class='modal-dialog modal-dialog-centered orModalLg' role='document'>
+            <div class='modal-dialog modal-dialog-centered modal-lg' role='document'>
                 <div class='modal-content'>
                     <div class='modal-header orModalHeaderInfo'>
                         <h3 class='modal-title my-auto' id='viewCaseTitle'>View Case</h3>
@@ -712,6 +712,54 @@
                 </div> <!-- /.modal-content -->
             </div> <!-- /.modal-dialog -->
         </div> <!-- /#dialogViewCase -->
+
+        <!--
+           ----------------------- Dialog - Load/Import Case File -----------------------
+        -->
+        <div class='modal fade' id='dialogLoadFileCase'
+             tabindex='-1' role='dialog' aria-labelledby='loadFileCaseTitle' aria-hidden='true'>
+            <div class='modal-dialog modal-dialog-centered modal-lg' role='document'>
+                <div class='modal-content'>
+                    <div class='modal-header orModalHeaderWarning'>
+                        <h3 class='modal-title my-auto' id='loadFileCaseTitle'>Import Case File</h3>
+                        <button type='button' class='close my-auto'
+                                data-dismiss='modal' aria-label='{{ _('Close') }}'>
+                            <span class='orButtonClose' aria-hidden='true'>&times</span>
+                        </button>
+                    </div> <!-- /.modal-header -->
+
+                    <div class='modal-body'>
+                        <div class='text-center orButtonsSubmitCancel'>
+                           <form id='formLoadFileCase' action='' method='post'>
+                               <h2 class='orDialogBodyTitle'>{{ _('Importing Case Data') }}</h2>
+                               <h3 class='orDialogBodyText'>{{ _('Select the file that contains the Case data to be imported') }}: <span class='orClassToDelete' id='classToDelete'></span></h3>
+
+                               <div class='alert' id='customCaseFileAlert' role='alert'></div> <!-- /.alert -->
+                               <div class='custom-file orDialogBodyContent form-group' id='customCaseFileDiv'>
+                                   <input type='file' class='custom-file-input' name='caseFile' id='customCaseFileInput'
+                                          lang='en' accept='.xls, .xlsx, .xlsm' aria-describedby='customCaseFileHelp'/>
+                                   <label class='custom-file-label' for='customCaseFile' id='customCaseFileLabel'>
+                                       {{ _('Choose a file') }}
+                                   </label>
+                                   <small id='customCaseFileHelp' class='form-text text-muted'>
+                                       {{ _('File should be .xls or .xlsx andsize must be 5MB at maximum') }}
+                                   </small>
+                               </div> <!-- /.custom-file -->
+
+                               <button id='buttonSubmitFileCase' type='button' name='validate' value='submit'
+                                       class='btn btn-success' disabled>
+                                   <i class='fad fa-file-upload'></i>{{ _('Load File') }}
+                               </button>
+                               <button id='buttonCancelDeleteCase' type='button' value='Cancel'
+                                       class='btn btn-danger cancel_button' data-dismiss='modal'>
+                                   <i class='fad fa-times'></i>{{ _('Cancel') }}
+                               </button>
+                           </form>
+                       </div> <!-- /.text-center -->
+                    </div><!-- /.modal-body-->
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div> <!-- /#dialogLoadFileCase -->
 
         <!-- jQuery 3.4.1 -->
 		<script src = '{{ url_for("static", filename="dist/js/includes/jquery/jquery.min.js") }}'></script>

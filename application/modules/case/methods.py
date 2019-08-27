@@ -21,7 +21,7 @@ class CaseMethod(Case):
         print('type(case_data): ', type(case_data))
         print('case_data[name]: ', case_data['name'])
         cases_collection = mongo.db.cases
-        validate_case = cases_collection.find({'case_id': case_data['id']})
+        validate_case = cases_collection.find({'caseId': case_data['id']})
         print('validate_case.count', validate_case.count())
         if validate_case.count() == 0:
             print('Case does not exist: {}'.format(case_data['name']))
@@ -82,7 +82,7 @@ class CaseMethod(Case):
     def get_all_cases_name_id() -> list:
         # Return a list of all cases' name & id
         cases_collection = mongo.db.cases
-        return list(cases_collection.find({}, {'_id': 0, 'case_id': 1, 'name': 1}))
+        return list(cases_collection.find({}, {'_id': 0, 'caseId': 1, 'name': 1}))
     
     @staticmethod
     def get_all_groups_name() -> list:
@@ -139,17 +139,17 @@ class CaseMethod(Case):
         for case in all_cases:
             print('----------------> {}. case: {}'.format(counter, case))
             counter += 1
-            new_case = {'case_id': case['case_id'],
-                        'client_id': case['client_id'],
-                        'client_name': case['client_name'],
+            new_case = {'caseId': case['caseId'],
+                        'clientId': case['clientId'],
+                        'clientName': case['clientName'],
                         'description': case['description'],
                         'groups': {},
                         'name': case['name'],
                         'status': case['status'],
                         'type': case['type'],
-                        'creation_date': (case['creation_date']).strftime('%A, %d-%B-%Y %I:%M%p'),
-                        'due_date': (case['due_date']).strftime('%A, %d-%B-%Y %I:%M%p'),
-                        'last_update': (case['last_modification']).strftime('%A, %d-%B-%Y %I:%M%p')}
+                        'creationDate': (case['creationDate']).strftime('%A, %d-%B-%Y %I:%M%p'),
+                        'dueDate': (case['dueDate']).strftime('%A, %d-%B-%Y %I:%M%p'),
+                        'last_update': (case['lastModification']).strftime('%A, %d-%B-%Y %I:%M%p')}
             print('-*-*-*-*-*-*-*-*-*-* {}. new_case: '.format(counter, new_case))
             
             if len(user_groups) == 0 and len(user_groups_manager) == 0:
@@ -183,18 +183,18 @@ class CaseMethod(Case):
     def update_case_data(case_name: str, case_data: dict) -> bool:
         # Update case data
         print('------------------ update_case_data\ncase_name: {}\ncase_data: {}'.format(case_name, case_data))
-        providedDate = case_data['due_date']
+        providedDate = case_data['dueDate']
         providedDate = providedDate + ':00'
         newDate = datetime.strptime(providedDate, '%Y-%m-%dT%H:%M:%S')
         cases_collection = mongo.db.cases
         case_update = cases_collection.update({'name': case_name},
                                               {'$set': {'name': case_data['name'],
-                                                        'case_id': case_data['case_id'],
+                                                        'caseId': case_data['caseId'],
                                                         'description': case_data['description'],
                                                         'groups': case_data['groups'],
                                                         'status': case_data['status'],
                                                         'type': case_data['type'],
-                                                        'due_date': newDate
+                                                        'dueDate': newDate
                                                         }})
         if case_update:
             print('case_update: ', case_update)
@@ -202,11 +202,11 @@ class CaseMethod(Case):
         return False
     
     @staticmethod
-    def validate_case_exist(case_id):
-        # Validate if a provided case_id exists or not in DB
+    def validate_case_exist(caseId):
+        # Validate if a provided caseId exists or not in DB
         print('--------------------- validate_case_exist')
         cases_collection = mongo.db.cases
-        return cases_collection.find({'case_id': case_id})
+        return cases_collection.find({'caseId': caseId})
     
     @staticmethod
     def setClassToExcelFile(casesList):

@@ -9,6 +9,8 @@ Copyright (c) 2019. This Application has been developed by OR73.
 # PUT: Update user data
 from flask import Blueprint, flash, redirect, request, render_template, session, url_for
 from flask_login import current_user, login_required
+import xlrd
+from _datetime import datetime
 
 from .methods import CaseMethod
 
@@ -78,7 +80,7 @@ def cases():
 def allGroups():
     """
     Call CaseMethod methods to retrieve some information:
-    - get_all_cases_name_id: retrieve a list of dict {'name': <case_name>, 'case_id': <case_id>}
+    - get_all_cases_name_id: retrieve a list of dict {'name': <case_name>, 'caseId': <caseId>}
     - get_all_groups_name: retrieve a list of dict {'name': <group_name>}
     From each list of dicts, a new list is created containing only strings>
     - casesIdList: list of all cases ID
@@ -97,7 +99,7 @@ def allGroups():
     
     # Create a couple of lists containing casesId and casesName
     for case in allCasesIdAndName:
-        casesIdList.append(case['case_id'])
+        casesIdList.append(case['caseId'])
         casesNameList.append(case['name'])
     
     # Create a list containing only unique groups name
@@ -125,6 +127,36 @@ def caseFile():
     casesList = request.get_json()
     toReturn = CaseMethod.setClassToExcelFile(casesList)
     return toReturn
+
+
+@case_bp.route('/case/upload/file/', methods=['POST'])
+@login_required
+def caseUploadFile():
+    print('-------------------- caseUploadFile </case/upload/file>')
+    print('request: ', request)
+    print('request.files: ', request.files)
+    caseFileData = request.files['caseFile'].read()
+    # print('caseFileData: ', caseFileData)
+    # Open .xls/.xlsx file and validate data
+    workbook = xlrd.open_workbook(filename='format.xlsx', file_contents=caseFileData)
+    sheet = workbook.sheet_by_index(0)   # 1st sheet
+    print('sheet(2,1): ', sheet.cell_value(2, 1))
+    print('sheet(14, 2): ', sheet.cell_value(14, 2))
+    print('type(sheet(14, 2)): ', type(sheet.cell_value(14, 2)))
+    print('datetime(sheet(14, 2)): ', (sheet.cell_value(14, 2)).strip().replace(' ', 'T') + ':00')
+    caseData = dict(id=sheet.cell_value(3, 2),
+                    name=sheet.cell_value(4, 2),
+                    description=sheet.cell_value(5, 2),
+                    status=sheet.cell_value(7, 1),
+                    type=sheet.cell_value(7, 2),
+                    groups=sheet.cell_value(8, 2),
+                    clientId=sheet.cell_value(10, 2),
+                    clientName=sheet.cell_value(11, 2),
+                    creationDate=sheet.cell_value(13, 2),
+                    dueDate=(sheet.cell_value(14, 2)).strip().replace(' ', 'T') + ':00',
+                    lastModification=sheet.cell_value(15, 2),
+                    )
+    return CaseMethod.create_case(caseData)
 
 
 @case_bp.route('/cases/<username>')
@@ -213,7 +245,7 @@ def create():
     print('validate_exist_user: ', validateExistUser.count())
     print('*** --- caseGroup: ', caseGroup)
     
-    # Validate if case_id does not exist
+    # Validate if caseId does not exist
     if validateExistUser.count() == 0:
         print('case with ID: {} - does not exist...'.format(caseId))
         newCase = {'id': caseId,
@@ -222,9 +254,9 @@ def create():
                    'type': caseType,
                    'status': caseStatus,
                    'groups': [caseGroup],
-                   'due_date': caseDueDate,
-                   'client_name': caseClientName,
-                   'client_id': caseClientId,
+                   'dueDate': caseDueDate,
+                   'clientName': caseClientName,
+                   'clientId': caseClientId,
                    'client_description': caseClientDescription}
         print('NEW CASE - data: {}'.format(newCase))
         caseCreated = CaseMethod.create_case(newCase)
@@ -349,12 +381,12 @@ def update(caseName: str):
         # groups = request.form.getlist('current_case_groups')
         case_data = {
             'name': request.form.get('name'),
-            'case_id': request.form.get('id'),
+            'caseId': request.form.get('id'),
             'description': request.form.get('description'),
             'groups': [request.form.get('group')],
             'status': request.form.get('status'),
             'type': request.form.get('type'),
-            'due_date': request.form.get('dueDate')
+            'dueDate': request.form.get('dueDate')
         }
         print('case_data: ', case_data)
         print('caseName: ', caseName)

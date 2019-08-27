@@ -88,5 +88,5 @@
 
     // Custom Globals
     "globals"       : { "$": true, "$SCRIPT_ROOT": true, "Cookies": true,
-        "due_date": true,"jquery": true, "popover": true }        // additional predefined global variables
+        "dueDate": true,"jquery": true, "popover": true }        // additional predefined global variables
 }

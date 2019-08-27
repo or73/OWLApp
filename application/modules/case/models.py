@@ -11,16 +11,16 @@ class Case:
         self.__id = case['id']
         self.__name = case['name']
         self.__description = case['description']
-        self.__case_status = case['status']
-        self.__case_type = case['type']
-
-        self.__client_id = case['client_id']
-        self.__client_name = case['client_name']
+        self.__caseStatus = case['status']
+        self.__caseType = case['type']
         self.__groups = case['groups'] if 'groups' in case else []
-
-        self.__creation_date = self.set_current_date()
-        self.__due_date = self.string_to_datetime(case['due_date'])
-        self.__last_modification_date = self.set_current_date()
+        
+        self.__clientId = case['clientId']
+        self.__clientName = case['clientName']
+        
+        self.__creationDate = self.set_current_date()
+        self.__dueDate = self.string_to_datetime(case['dueDate'])
+        self.__lastModificationDate = self.set_current_date()
 
     def __repr__(self) -> str:
         return ('<\n'
@@ -41,14 +41,14 @@ class Case:
                 '>'.format(self.__id,
                            self.__name,
                            self.__description,
-                           self.__case_status,
-                           self.__case_type,
+                           self.__caseStatus,
+                           self.__caseType,
                            self.__groups,
-                           self.__client_id,
-                           self.__client_name,
-                           self.__creation_date,
-                           self.__due_date,
-                           self.__last_modification_date))
+                           self.__clientId,
+                           self.__clientName,
+                           self.__creationDate,
+                           self.__dueDate,
+                           self.__lastModificationDate))
 
         # -------------- getters
 
@@ -57,49 +57,49 @@ class Case:
         # Return object data in easily serializable format
         print('Case Model - Serialize...')
         return {
-            'case_id': self.__id,
+            'caseId': self.__id,
             'name': self.__name,
             'description': self.__description,
-            'status': self.__case_status,
-            'type': self.__case_type,
+            'status': self.__caseStatus,
+            'type': self.__caseType,
             'groups': self.__groups,
-            'client_id': self.__client_id,
-            'client_name': self.__client_name,
-            'creation_date': self.__creation_date,
-            'due_date': self.__due_date,
-            'last_modification': self.__last_modification_date,
+            'clientId': self.__clientId,
+            'clientName': self.__clientName,
+            'creationDate': self.__creationDate,
+            'dueDate': self.__dueDate,
+            'lastModification': self.__lastModificationDate,
         }
 
     # ---------------------------- properties
     @property
-    def case_id(self) -> str:
-        # Return case_id
+    def caseId(self) -> str:
+        # Return caseId
         return self.__id
 
     @property
-    def case_status(self) -> str:
-        # Return case_status
-        return self.__case_status
+    def caseStatus(self) -> str:
+        # Return caseStatus
+        return self.__caseStatus
 
     @property
-    def case_type(self) -> str:
+    def caseType(self) -> str:
         # Return case type
-        return self.__case_type
+        return self.__caseType
 
     @property
-    def client_id(self) -> str:
-        # Return case client_id
-        return self.__client_id
+    def clientId(self) -> str:
+        # Return case clientId
+        return self.__clientId
 
     @property
-    def client_name(self) -> str:
-        # Return case client_name
-        return self.__client_name
+    def clientName(self) -> str:
+        # Return case clientName
+        return self.__clientName
 
     @property
-    def creation_date(self) -> datetime:
+    def creationDate(self) -> datetime:
         # Return case creation date
-        return self.__creation_date
+        return self.__creationDate
 
     @property
     def description(self) -> str:
@@ -107,9 +107,9 @@ class Case:
         return self.__description
 
     @property
-    def due_date(self) -> datetime:
-        # Return case due_date
-        return self.__due_date
+    def dueDate(self) -> datetime:
+        # Return case dueDate
+        return self.__dueDate
 
     @property
     def groups(self) -> list:
@@ -122,9 +122,9 @@ class Case:
         return self.__id
 
     @property
-    def last_modification_date(self) -> datetime:
+    def lastModificationDate(self) -> datetime:
         # Return case last modification date
-        return self.__last_modification_date
+        return self.__lastModificationDate
 
     @property
     def name(self) -> str:
@@ -132,41 +132,41 @@ class Case:
         return self.__name
 
     # ---------------------------- setters
-    @case_status.setter
-    def case_status(self, new_status) -> None:
+    @caseStatus.setter
+    def caseStatus(self, new_status) -> None:
         # Set new_status
-        self.case_status = new_status
+        self.caseStatus = new_status
 
-    @case_type.setter
-    def case_type(self, new_type) -> None:
+    @caseType.setter
+    def caseType(self, new_type) -> None:
         # Set new_type
-        self.__case_type = new_type
+        self.__caseType = new_type
 
-    @client_id.setter
-    def client_id(self, new_client_id) -> None:
-        # Set new client_id
-        self.__client_id = new_client_id
+    @clientId.setter
+    def clientId(self, new_clientId) -> None:
+        # Set new clientId
+        self.__clientId = new_clientId
 
-    @client_name.setter
-    def client_name(self, new_client_name) -> None:
-        # Set new client_name
-        self.__client_name = new_client_name
+    @clientName.setter
+    def clientName(self, new_clientName) -> None:
+        # Set new clientName
+        self.__clientName = new_clientName
 
-    @creation_date.setter
-    def creation_date(self, new_date) -> None:
+    @creationDate.setter
+    def creationDate(self, new_date) -> None:
         # Set new case creation date
         print('new_date: ', new_date)
-        self.__creation_date = self.set_current_date()
+        self.__creationDate = self.set_current_date()
 
     @description.setter
     def description(self, new_description) -> None:
         # Set new case description
         self.__description = new_description
 
-    @due_date.setter
-    def due_date(self, new_due_date) -> None:
-        # Set new due_date
-        self.__due_date = new_due_date
+    @dueDate.setter
+    def dueDate(self, new_dueDate) -> None:
+        # Set new dueDate
+        self.__dueDate = new_dueDate
 
     @groups.setter
     def groups(self, new_group_name) -> None:
@@ -178,11 +178,11 @@ class Case:
         # Set new case id
         self.__id = new_id
 
-    @last_modification_date.setter
-    def last_modification_date(self, new_date) -> None:
-        # Set new case last_modification_date
+    @lastModificationDate.setter
+    def lastModificationDate(self, new_date) -> None:
+        # Set new case lastModificationDate
         print('new_date: ', new_date)
-        self.__last_modification_date = self.set_current_date()
+        self.__lastModificationDate = self.set_current_date()
 
     @name.setter
     def name(self, new_name) -> None:
@@ -198,4 +198,5 @@ class Case:
     @staticmethod
     def string_to_datetime(string_date) -> datetime:
         # Convert string to datetime
+        print('string_date: ', string_date)
         return datetime.strptime(string_date, '%Y-%m-%dT%H:%M:%S')
